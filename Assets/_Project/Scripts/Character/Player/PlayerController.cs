@@ -1,15 +1,21 @@
 using UnityEngine;
 using SoulsLikeIsh.Core;
 using SoulsLikeIsh.Input;
+using SoulsLikeIsh.Combat;
+using SoulsLikeIsh.Character.Shared;
 
 namespace SoulsLikeIsh.Character.Player
 {
     [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(StaminaComponent))]
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private PlayerInputReader inputReader;
         [SerializeField] private Transform cameraTransform;
         [SerializeField] private Animator animator;
+        [SerializeField] private Hitbox weaponHitbox;
+        [SerializeField] private AttackData defaultAttack;
+        [SerializeField] private float dodgeStaminaCost = 20f;
 
         [SerializeField] private float moveSpeed = 4f;
         [SerializeField] private float sprintSpeed = 7f;
@@ -19,6 +25,9 @@ namespace SoulsLikeIsh.Character.Player
         public PlayerInputReader InputReader => inputReader;
         public Transform CameraTransform => cameraTransform;
         public Animator Animator => animator;
+        public Hitbox WeaponHitbox => weaponHitbox;
+        public AttackData CurrentAttack => defaultAttack;
+        public StaminaComponent Stamina { get; private set; }
         public CharacterController CharacterController { get; private set; }
         public StateMachine StateMachine { get; private set; }
 
@@ -39,6 +48,7 @@ namespace SoulsLikeIsh.Character.Player
         private void Awake()
         {
             CharacterController = GetComponent<CharacterController>();
+            Stamina = GetComponent<StaminaComponent>();
             StateMachine = new StateMachine();
 
             IdleState = new PlayerIdleState(this);
@@ -90,7 +100,16 @@ namespace SoulsLikeIsh.Character.Player
                 _verticalVelocity += gravity * Time.deltaTime;
         }
 
-        private void HandleAttack() => StateMachine.ChangeState(AttackState);
-        private void HandleDodge() => StateMachine.ChangeState(DodgeState);
+        private void HandleAttack()
+        {
+            if (Stamina.TrySpend(defaultAttack.StaminaCost))
+                StateMachine.ChangeState(AttackState);
+        }
+
+        private void HandleDodge()
+        {
+            if (Stamina.TrySpend(dodgeStaminaCost))
+                StateMachine.ChangeState(DodgeState);
+        }
     }
 }
