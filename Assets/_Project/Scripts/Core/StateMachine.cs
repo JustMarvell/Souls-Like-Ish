@@ -1,16 +1,18 @@
-using UnityEngine;
-
-public class StateMachine : MonoBehaviour
+namespace SoulsLikeIsh.Core
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class StateMachine
     {
-        
-    }
+        public IState CurrentState { get; private set; }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public void ChangeState(IState newState)
+        {
+            if (newState == CurrentState) return;
+            CurrentState?.Exit();
+            CurrentState = newState;
+            CurrentState?.Enter();
+        }
+
+        public void Tick() => CurrentState?.Tick();
+        public void FixedTick() => CurrentState?.FixedTick();
     }
 }
