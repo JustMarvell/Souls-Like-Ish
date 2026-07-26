@@ -5,8 +5,6 @@ namespace SoulsLikeIsh.Character.Player
 {
     public class PlayerDodgeState : IState
     {
-        private const float PlaceholderDuration = 0.4f;
-
         private readonly PlayerController _player;
         private float _timer;
 
@@ -16,13 +14,14 @@ namespace SoulsLikeIsh.Character.Player
         {
             _timer = 0f;
             _player.RootMotionEnabled = true;
-            // TODO: trigger dodge animation, enable i-frames via hurtbox once combat core exists.
+            _player.PlayDodgeAnimation();
+            // TODO: enable i-frames via hurtbox once combat core supports invulnerability windows.
         }
 
         public void Tick()
         {
             _timer += Time.deltaTime;
-            if (_timer >= PlaceholderDuration)
+            if (_timer >= _player.DodgeDuration)
                 _player.StateMachine.ChangeState(_player.IdleState);
         }
 

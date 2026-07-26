@@ -16,6 +16,7 @@ namespace SoulsLikeIsh.Character.Player
         [SerializeField] private Hitbox weaponHitbox;
         [SerializeField] private AttackData defaultAttack;
         [SerializeField] private float dodgeStaminaCost = 20f;
+        [SerializeField] private float dodgeDuration = 0.4f;
 
         [SerializeField] private float moveSpeed = 4f;
         [SerializeField] private float sprintSpeed = 7f;
@@ -34,6 +35,11 @@ namespace SoulsLikeIsh.Character.Player
         public float MoveSpeed => moveSpeed;
         public float SprintSpeed => sprintSpeed;
         public float RotationSpeed => rotationSpeed;
+        public float DodgeDuration => dodgeDuration;
+
+        private static readonly int SpeedHash = Animator.StringToHash("Speed");
+        private static readonly int AttackHash = Animator.StringToHash("Attack");
+        private static readonly int DodgeHash = Animator.StringToHash("Dodge");
 
         public Vector3 MoveVelocity { get; set; }
         public bool RootMotionEnabled { get; set; }
@@ -79,6 +85,9 @@ namespace SoulsLikeIsh.Character.Player
             StateMachine.Tick();
             ApplyGravity();
             CharacterController.Move((MoveVelocity + Vector3.up * _verticalVelocity) * Time.deltaTime);
+
+            if (animator != null)
+                animator.SetFloat(SpeedHash, MoveVelocity.magnitude);
         }
 
         private void FixedUpdate()
@@ -88,8 +97,9 @@ namespace SoulsLikeIsh.Character.Player
 
         private void OnAnimatorMove()
         {
-            // TODO: once root motion animations exist, feed animator.deltaPosition into
-            // CharacterController.Move here when RootMotionEnabled is true (Attack/Dodge states).
+            if (!RootMotionEnabled || animator == null) return;
+            CharacterController.Move(animator.deltaPosition);
+            transform.rotation *= animator.deltaRotation;
         }
 
         private void ApplyGravity()
@@ -110,6 +120,16 @@ namespace SoulsLikeIsh.Character.Player
         {
             if (Stamina.TrySpend(dodgeStaminaCost))
                 StateMachine.ChangeState(DodgeState);
+        }
+
+        public void PlayAttackAnimation()
+        {
+            if (animator != null) animator.SetTrigger(AttackHash);
+        }
+
+        public void PlayDodgeAnimation()
+        {
+            if (animator != null) animator.SetTrigger(DodgeHash);
         }
     }
 }

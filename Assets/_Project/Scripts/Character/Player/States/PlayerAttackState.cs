@@ -20,7 +20,7 @@ namespace SoulsLikeIsh.Character.Player
             _player.MoveVelocity = Vector3.zero;
             _player.RootMotionEnabled = true;
             _player.WeaponHitbox.SetDamage(_player.CurrentAttack.Damage);
-            // TODO: trigger attack animation via Animator once animations exist
+            _player.PlayAttackAnimation();
         }
 
         public void Tick()
