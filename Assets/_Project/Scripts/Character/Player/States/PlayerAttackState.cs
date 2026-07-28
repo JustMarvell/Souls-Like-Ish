@@ -19,14 +19,14 @@ namespace SoulsLikeIsh.Character.Player
             _hitboxClosed = false;
             _player.MoveVelocity = Vector3.zero;
             _player.RootMotionEnabled = true;
-            _player.WeaponHitbox.SetDamage(_player.CurrentAttack.Damage);
+            _player.WeaponHitbox.SetDamage(_player.ActiveAttack.Damage);
             _player.PlayAttackAnimation();
         }
 
         public void Tick()
         {
             _timer += Time.deltaTime;
-            var attack = _player.CurrentAttack;
+            var attack = _player.ActiveAttack;
 
             if (!_hitboxOpened && _timer >= attack.ActiveStart)
             {

@@ -20,14 +20,7 @@ namespace SoulsLikeIsh.Character.Player
                 return;
             }
 
-            Vector3 camForward = _player.CameraTransform.forward;
-            Vector3 camRight = _player.CameraTransform.right;
-            camForward.y = 0f;
-            camRight.y = 0f;
-            camForward.Normalize();
-            camRight.Normalize();
-
-            Vector3 moveDir = camForward * input.y + camRight * input.x;
+            Vector3 moveDir = _player.GetCameraRelativeDirection(input);
             float speed = _player.InputReader.SprintHeld ? _player.SprintSpeed : _player.MoveSpeed;
             _player.MoveVelocity = moveDir * speed;
 

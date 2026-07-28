@@ -8,15 +8,23 @@ namespace SoulsLikeIsh.Character.Player
 {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(StaminaComponent))]
-    public class PlayerController : MonoBehaviour
+    [RequireComponent(typeof(HealthComponent))]
+    public class PlayerController : MonoBehaviour, IDamageable
     {
+        public enum DefenseMode { None, Blocking, Parrying }
+
         [SerializeField] private PlayerInputReader inputReader;
         [SerializeField] private Transform cameraTransform;
         [SerializeField] private Animator animator;
         [SerializeField] private Hitbox weaponHitbox;
         [SerializeField] private AttackData defaultAttack;
+        [SerializeField] private AttackData counterAttack;
         [SerializeField] private float dodgeStaminaCost = 20f;
         [SerializeField] private float dodgeDuration = 0.4f;
+        [SerializeField] private float blockStaminaCost = 15f;
+        [SerializeField] private float parryWindowDuration = 0.2f;
+        [SerializeField] private float parryRecoveryDuration = 0.3f;
+        [SerializeField] private float counterWindowDuration = 1.5f;
 
         [SerializeField] private float moveSpeed = 4f;
         [SerializeField] private float sprintSpeed = 7f;
@@ -27,15 +35,20 @@ namespace SoulsLikeIsh.Character.Player
         public Transform CameraTransform => cameraTransform;
         public Animator Animator => animator;
         public Hitbox WeaponHitbox => weaponHitbox;
-        public AttackData CurrentAttack => defaultAttack;
+        public AttackData ActiveAttack { get; set; }
         public StaminaComponent Stamina { get; private set; }
+        public HealthComponent Health { get; private set; }
         public CharacterController CharacterController { get; private set; }
         public StateMachine StateMachine { get; private set; }
+        public DefenseMode CurrentDefenseMode { get; set; }
+        public bool CounterWindowOpen { get; private set; }
 
         public float MoveSpeed => moveSpeed;
         public float SprintSpeed => sprintSpeed;
         public float RotationSpeed => rotationSpeed;
         public float DodgeDuration => dodgeDuration;
+        public float ParryWindowDuration => parryWindowDuration;
+        public float ParryRecoveryDuration => parryRecoveryDuration;
 
         private static readonly int SpeedHash = Animator.StringToHash("Speed");
         private static readonly int AttackHash = Animator.StringToHash("Attack");
@@ -48,19 +61,25 @@ namespace SoulsLikeIsh.Character.Player
         public PlayerMoveState MoveState { get; private set; }
         public PlayerAttackState AttackState { get; private set; }
         public PlayerDodgeState DodgeState { get; private set; }
+        public PlayerBlockState BlockState { get; private set; }
+        public PlayerParryState ParryState { get; private set; }
 
         private float _verticalVelocity;
+        private float _counterWindowTimer;
 
         private void Awake()
         {
             CharacterController = GetComponent<CharacterController>();
             Stamina = GetComponent<StaminaComponent>();
+            Health = GetComponent<HealthComponent>();
             StateMachine = new StateMachine();
 
             IdleState = new PlayerIdleState(this);
             MoveState = new PlayerMoveState(this);
             AttackState = new PlayerAttackState(this);
             DodgeState = new PlayerDodgeState(this);
+            BlockState = new PlayerBlockState(this);
+            ParryState = new PlayerParryState(this);
         }
 
         private void Start()
@@ -72,12 +91,14 @@ namespace SoulsLikeIsh.Character.Player
         {
             inputReader.OnAttack += HandleAttack;
             inputReader.OnDodge += HandleDodge;
+            inputReader.OnParry += HandleParry;
         }
 
         private void OnDisable()
         {
             inputReader.OnAttack -= HandleAttack;
             inputReader.OnDodge -= HandleDodge;
+            inputReader.OnParry -= HandleParry;
         }
 
         private void Update()
@@ -88,6 +109,19 @@ namespace SoulsLikeIsh.Character.Player
 
             if (animator != null)
                 animator.SetFloat(SpeedHash, MoveVelocity.magnitude);
+
+            TickCounterWindow();
+
+            bool inNeutralState = StateMachine.CurrentState == IdleState || StateMachine.CurrentState == MoveState;
+            if (inNeutralState && inputReader.BlockHeld)
+                StateMachine.ChangeState(BlockState);
+        }
+
+        private void TickCounterWindow()
+        {
+            if (!CounterWindowOpen) return;
+            _counterWindowTimer -= Time.deltaTime;
+            if (_counterWindowTimer <= 0f) CounterWindowOpen = false;
         }
 
         private void FixedUpdate()
@@ -112,14 +146,30 @@ namespace SoulsLikeIsh.Character.Player
 
         private void HandleAttack()
         {
-            if (Stamina.TrySpend(defaultAttack.StaminaCost))
+            if (CounterWindowOpen)
+            {
+                CounterWindowOpen = false;
+                ActiveAttack = counterAttack != null ? counterAttack : defaultAttack;
                 StateMachine.ChangeState(AttackState);
+                return;
+            }
+
+            if (Stamina.TrySpend(defaultAttack.StaminaCost))
+            {
+                ActiveAttack = defaultAttack;
+                StateMachine.ChangeState(AttackState);
+            }
         }
 
         private void HandleDodge()
         {
             if (Stamina.TrySpend(dodgeStaminaCost))
                 StateMachine.ChangeState(DodgeState);
+        }
+
+        private void HandleParry()
+        {
+            StateMachine.ChangeState(ParryState);
         }
 
         public void PlayAttackAnimation()
@@ -130,6 +180,38 @@ namespace SoulsLikeIsh.Character.Player
         public void PlayDodgeAnimation()
         {
             if (animator != null) animator.SetTrigger(DodgeHash);
+        }
+
+        public Vector3 GetCameraRelativeDirection(Vector2 input)
+        {
+            Vector3 camForward = cameraTransform.forward;
+            Vector3 camRight = cameraTransform.right;
+            camForward.y = 0f;
+            camRight.y = 0f;
+            camForward.Normalize();
+            camRight.Normalize();
+            return camForward * input.y + camRight * input.x;
+        }
+
+        public void TakeDamage(DamageInfo damageInfo)
+        {
+            switch (CurrentDefenseMode)
+            {
+                case DefenseMode.Parrying:
+                    CounterWindowOpen = true;
+                    _counterWindowTimer = counterWindowDuration;
+                    damageInfo.Source.GetComponentInParent<IStaggerable>()?.ApplyStagger();
+                    break;
+
+                case DefenseMode.Blocking:
+                    Stamina.TrySpend(blockStaminaCost);
+                    // TODO: guard-break handling when stamina can't cover the hit.
+                    break;
+
+                default:
+                    Health.TakeDamage(damageInfo.Amount);
+                    break;
+            }
         }
     }
 }
