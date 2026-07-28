@@ -1,0 +1,4 @@
+namespace SoulsLikeIsh.AI
+{
+    
+}
