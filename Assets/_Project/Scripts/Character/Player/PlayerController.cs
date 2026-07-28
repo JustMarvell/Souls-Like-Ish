@@ -53,6 +53,10 @@ namespace SoulsLikeIsh.Character.Player
         private static readonly int SpeedHash = Animator.StringToHash("Speed");
         private static readonly int AttackHash = Animator.StringToHash("Attack");
         private static readonly int DodgeHash = Animator.StringToHash("Dodge");
+        private static readonly int CounterHash = Animator.StringToHash("Counter");
+        private static readonly int ParryHash = Animator.StringToHash("Parry");
+        private static readonly int BlockHitHash = Animator.StringToHash("BlockHit");
+        private static readonly int IsBlockingHash = Animator.StringToHash("IsBlocking");
 
         public Vector3 MoveVelocity { get; set; }
         public bool RootMotionEnabled { get; set; }
@@ -150,6 +154,7 @@ namespace SoulsLikeIsh.Character.Player
             {
                 CounterWindowOpen = false;
                 ActiveAttack = counterAttack != null ? counterAttack : defaultAttack;
+                PlayCounterAnimation();
                 StateMachine.ChangeState(AttackState);
                 return;
             }
@@ -157,6 +162,7 @@ namespace SoulsLikeIsh.Character.Player
             if (Stamina.TrySpend(defaultAttack.StaminaCost))
             {
                 ActiveAttack = defaultAttack;
+                PlayAttackAnimation();
                 StateMachine.ChangeState(AttackState);
             }
         }
@@ -182,6 +188,26 @@ namespace SoulsLikeIsh.Character.Player
             if (animator != null) animator.SetTrigger(DodgeHash);
         }
 
+        public void PlayCounterAnimation()
+        {
+            if (animator != null) animator.SetTrigger(CounterHash);
+        }
+
+        public void PlayParryAnimation()
+        {
+            if (animator != null) animator.SetTrigger(ParryHash);
+        }
+
+        public void PlayBlockHitAnimation()
+        {
+            if (animator != null) animator.SetTrigger(BlockHitHash);
+        }
+
+        public void SetBlocking(bool isBlocking)
+        {
+            if (animator != null) animator.SetBool(IsBlockingHash, isBlocking);
+        }
+
         public Vector3 GetCameraRelativeDirection(Vector2 input)
         {
             Vector3 camForward = cameraTransform.forward;
@@ -205,6 +231,7 @@ namespace SoulsLikeIsh.Character.Player
 
                 case DefenseMode.Blocking:
                     Stamina.TrySpend(blockStaminaCost);
+                    PlayBlockHitAnimation();
                     // TODO: guard-break handling when stamina can't cover the hit.
                     break;
 

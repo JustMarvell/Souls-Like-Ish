@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf0e5ff932616824ea45bf9b2c5f84a6, type: 3}
-  m_Name: PlayerAttackData_1
+  m_Name: DefaultAttack
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Combat.AttackData
   duration: 1.2
   activeStart: 0.15

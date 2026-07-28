@@ -428,6 +428,7 @@ GameObject:
   - component: {fileID: 423630406}
   - component: {fileID: 423630405}
   - component: {fileID: 423630411}
+  - component: {fileID: 423630412}
   m_Layer: 0
   m_Name: CharacterTest_Cilinder
   m_TagString: Untagged
@@ -452,8 +453,13 @@ MonoBehaviour:
   animator: {fileID: 0}
   weaponHitbox: {fileID: 0}
   defaultAttack: {fileID: 0}
+  counterAttack: {fileID: 0}
   dodgeStaminaCost: 20
   dodgeDuration: 0.4
+  blockStaminaCost: 15
+  parryWindowDuration: 0.2
+  parryRecoveryDuration: 0.3
+  counterWindowDuration: 1.5
   moveSpeed: 4
   sprintSpeed: 7
   rotationSpeed: 540
@@ -515,6 +521,19 @@ MonoBehaviour:
   maxStamina: 100
   regenRate: 25
   regenDelay: 1
+--- !u!114 &423630412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 423630404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc85e3c1c7a4a95518619cde23c7f6f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Character.Shared.HealthComponent
+  maxHealth: 100
 --- !u!1 &518758575
 GameObject:
   m_ObjectHideFlags: 0
@@ -8931,8 +8950,9 @@ GameObject:
   - component: {fileID: 9101863668800760448}
   - component: {fileID: 9101863668800760447}
   - component: {fileID: 9101863668800760446}
+  - component: {fileID: 9101863668800760449}
   m_Layer: 0
-  m_Name: pico_chan_chr_pico_00
+  m_Name: CharacterTest_PICO
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11861,8 +11881,13 @@ MonoBehaviour:
   animator: {fileID: 4335466432419054645}
   weaponHitbox: {fileID: 8203040796329300339}
   defaultAttack: {fileID: 11400000, guid: 028bdd3855a3dfd16b023b2aa028115a, type: 2}
+  counterAttack: {fileID: 11400000, guid: f001d951350399c5abaa6f3d8f27cdc3, type: 2}
   dodgeStaminaCost: 20
   dodgeDuration: 1
+  blockStaminaCost: 15
+  parryWindowDuration: 0.8
+  parryRecoveryDuration: 0.8
+  counterWindowDuration: 1.5
   moveSpeed: 4
   sprintSpeed: 7
   rotationSpeed: 540
@@ -11907,6 +11932,19 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.7, z: -0.02}
+--- !u!114 &9101863668800760449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5826927934266587999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc85e3c1c7a4a95518619cde23c7f6f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Character.Shared.HealthComponent
+  maxHealth: 100
 --- !u!4 &9171576985448895463
 Transform:
   m_ObjectHideFlags: 0

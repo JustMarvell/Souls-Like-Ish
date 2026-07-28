@@ -1,18 +1,20 @@
-using SoulsLikeIsh.Core;
 using UnityEngine;
+using SoulsLikeIsh.Core;
 
 namespace SoulsLikeIsh.Character.Player
 {
     public class PlayerBlockState : IState
     {
         private const float GuardMoveSpeedMultiplier = 0.5f;
+
         private readonly PlayerController _player;
+
         public PlayerBlockState(PlayerController player) => _player = player;
 
         public void Enter()
         {
             _player.CurrentDefenseMode = PlayerController.DefenseMode.Blocking;
-            // TODO : raise guard animation bool once Animator controller has a block layer/state.
+            _player.SetBlocking(true);
         }
 
         public void Tick()
@@ -27,12 +29,11 @@ namespace SoulsLikeIsh.Character.Player
             Vector3 moveDir = _player.GetCameraRelativeDirection(input);
             _player.MoveVelocity = moveDir * (_player.MoveSpeed * GuardMoveSpeedMultiplier);
 
-            if (moveDir.magnitude > 0.001f)
+            if (moveDir.sqrMagnitude > 0.001f)
             {
                 Quaternion targetRot = Quaternion.LookRotation(moveDir);
                 _player.transform.rotation = Quaternion.RotateTowards(
-                    _player.transform.rotation, targetRot, _player.RotationSpeed * Time.deltaTime
-                );
+                    _player.transform.rotation, targetRot, _player.RotationSpeed * Time.deltaTime);
             }
         }
 
@@ -42,6 +43,7 @@ namespace SoulsLikeIsh.Character.Player
         {
             _player.CurrentDefenseMode = PlayerController.DefenseMode.None;
             _player.MoveVelocity = Vector3.zero;
+            _player.SetBlocking(false);
         }
     }
 }

@@ -1,5 +1,5 @@
-using SoulsLikeIsh.Core;
 using UnityEngine;
+using SoulsLikeIsh.Core;
 
 namespace SoulsLikeIsh.Character.Player
 {
@@ -14,14 +14,15 @@ namespace SoulsLikeIsh.Character.Player
         {
             _timer = 0f;
             _player.CurrentDefenseMode = PlayerController.DefenseMode.Parrying;
-            // TODO : Trigger parry animation via animator once dedidated clip exist.
+            _player.PlayParryAnimation();
         }
 
         public void Tick()
         {
             _timer += Time.deltaTime;
 
-            if (_player.CurrentDefenseMode == PlayerController.DefenseMode.Parrying && _timer >= _player.ParryWindowDuration)
+            if (_player.CurrentDefenseMode == PlayerController.DefenseMode.Parrying &&
+                _timer >= _player.ParryWindowDuration)
             {
                 _player.CurrentDefenseMode = PlayerController.DefenseMode.None; // window closed, punishable recovery
             }
@@ -31,7 +32,7 @@ namespace SoulsLikeIsh.Character.Player
         }
 
         public void FixedTick() { }
-        
+
         public void Exit()
         {
             _player.CurrentDefenseMode = PlayerController.DefenseMode.None;
