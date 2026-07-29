@@ -21,7 +21,7 @@ Performance is a first-class constraint, not an afterthought — the Radeon 660M
 ## Combat Identity
 
 Fast, punishing, parry-centric combat with weight:
-- **Attack** — data-driven via `AttackData` ScriptableObjects (damage, stamina cost, active-frame window)
+- **Attack** — data-driven via `AttackData` ScriptableObjects (damage, stamina cost, active-frame window); chains into a 3-hit combo via `NextCombo` references, with a buffered-input combo window per hit
 - **Dodge** — timed i-frame-style evasion (stamina-gated, root-motion driven)
 - **Parry** — tight binary timing window (no posture meter yet); a successful parry negates the hit, staggers the attacker (via `IStaggerable`), and opens a short counter window. A whiffed parry has a punishable recovery.
 - **Defend/Block** — held guard; fully negates damage but drains stamina per hit taken
@@ -38,7 +38,7 @@ Assets/
       PlayerControls.inputactions        Player + UI action maps
     Scripts/
       Core/                 SoulsLikeIsh.Core            IState, StateMachine (shared by player & enemy)
-      Input/                SoulsLikeIsh.Input            PlayerInputReader (ScriptableObject), generated wrapper
+      Input/                SoulsLikeIsh.Input            PlayerInputReader (ScriptableObject), InputBuffer, PlayerAction enum, generated wrapper
       Combat/                SoulsLikeIsh.Combat           Hitbox, Hurtbox, IDamageable, IStaggerable, DamageInfo, AttackData
       Character/
         Shared/              SoulsLikeIsh.Character.Shared  StaminaComponent, HealthComponent
@@ -57,7 +57,7 @@ Namespace root: `SoulsLikeIsh`.
 
 1. **State Machine** — ✅ shared `Core.StateMachine`/`IState` base, used identically by `PlayerController` and `EnemyController`
 2. **Stamina + Health** — ✅ implemented (`StaminaComponent`, `HealthComponent`); **Posture** not yet implemented — parry is currently a binary timing window rather than a multi-hit stagger meter
-3. **Input Buffering** — ⏳ not yet implemented; input is currently direct event-driven (no buffered/queued inputs during recovery windows)
+3. **Input Buffering** — ✅ `InputBuffer` timestamps buffered actions (Attack/Dodge/Parry); `PlayerController.ProcessInputBuffer()` consumes them once the player returns to an actionable state, instead of dropping inputs during recovery windows
 4. **Hitbox/Hurtbox + Parry Window** — ✅ frame-window-based hit detection (`Hitbox`/`Hurtbox`/`AttackData`), binary parry window with punishable whiff recovery
 5. **Data-Driven Attacks** — ✅ `AttackData` ScriptableObjects for move timing/damage/stamina cost, no code changes needed to add new attacks
 
@@ -68,6 +68,7 @@ Namespace root: `SoulsLikeIsh`.
 3. ✅ Combat core (hitboxes + stamina)
 4. ✅ Parry/Block/Counter layer (+ Health, `IStaggerable`)
 5. ✅ Basic enemy sharing the same combat core (NavMesh chase/attack/stagger/death)
+6. ✅ Attack combo chaining (`AttackData.NextCombo`, combo window buffering) + centralized input buffer (Attack/Dodge/Parry)
 
 Character animation (PicoChan retargeted + Animator Controllers for player and enemy) was set up in parallel with steps 2–5.
 
@@ -78,7 +79,8 @@ Character animation (PicoChan retargeted + Animator Controllers for player and e
 - Enemy death has no loot/despawn/respawn hookup yet
 - No posture/stagger meter — parry and stagger are binary/instant rather than accumulating
 - No lock-on camera system yet (camera-relative movement currently just uses whatever the assigned camera transform's rotation is)
-- No combo system — each attack is a single `AttackData`, not yet chained into strings
+- Combo chain is currently linear (3 hits, no branching); no directional/charged variants yet
+- Input buffering covers Attack/Dodge/Parry only — Jump/Interact/LockOn remain direct event-driven calls
 - Open-world streaming, inventory, save/load, and multiplayer world-visiting remain out of scope for the current vertical slice
 
 ## Development Conventions
