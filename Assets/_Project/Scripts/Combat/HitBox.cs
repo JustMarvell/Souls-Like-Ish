@@ -20,6 +20,21 @@ namespace SoulsLikeIsh.Combat
             _collider.isTrigger = true;
             _collider.enabled = false;
             if (owner == null) owner = transform.root.gameObject;
+
+            if (gameObject.TryGetComponent(out Rigidbody rb))
+            {
+                if (rb == null)
+                {
+                    rb = gameObject.AddComponent<Rigidbody>();
+                    rb.isKinematic = true;
+                    rb.useGravity = false;
+                }
+                else
+                {
+                    rb.isKinematic = true;
+                    rb.useGravity = false;
+                }
+            }
         }
 
         public void SetDamage(int damage) => _damage = damage;
