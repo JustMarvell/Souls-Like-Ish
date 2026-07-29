@@ -7,6 +7,7 @@ namespace SoulsLikeIsh.Character.Player
     public class PlayerAttackState : IState
     {
         private readonly PlayerController _player;
+        private Transform _target;
         private float _timer;
         private bool _hitboxOpened;
         private bool _hitboxClosed;
@@ -20,6 +21,16 @@ namespace SoulsLikeIsh.Character.Player
             _hitboxOpened = false;
             _hitboxClosed = false;
             _bufferedAttack = false;
+            _target = _player.FindAttackTarget();
+
+            if (_target != null)
+            {
+                Vector3 dir = _target.position - _player.transform.position;
+                dir.y = 0f;
+                if (dir.sqrMagnitude > 0.001f)
+                    _player.transform.rotation = Quaternion.LookRotation(dir);
+            }
+            
             _player.MoveVelocity = Vector3.zero;
             _player.RootMotionEnabled = true;
             _player.WeaponHitbox.SetDamage(_player.ActiveAttack.Damage);
@@ -27,6 +38,15 @@ namespace SoulsLikeIsh.Character.Player
 
         public void Tick()
         {
+            if (_target != null && _timer <= _player.ActiveAttack.ActiveStart)
+            {
+                Vector3 dir = _target.position - _player.transform.position;
+                dir.y = 0f;
+                if (dir.sqrMagnitude > 0.001f)
+                    _player.transform.rotation = Quaternion.RotateTowards(
+                        _player.transform.rotation, Quaternion.LookRotation(dir), _player.AttackRotationSpeed * Time.deltaTime);
+            }
+
             _timer += Time.deltaTime;
             var attack = _player.ActiveAttack;
 

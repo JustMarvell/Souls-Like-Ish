@@ -25,6 +25,10 @@ namespace SoulsLikeIsh.Character.Player
         [SerializeField] private float parryWindowDuration = 0.2f;
         [SerializeField] private float parryRecoveryDuration = 0.3f;
         [SerializeField] private float counterWindowDuration = 1.5f;
+        [SerializeField] private LayerMask targetableLayers;
+        [SerializeField] private float targetSearchRadius = 6f;
+        [SerializeField] private float targetSearchAngle = 70f;
+        [SerializeField] private float attackRotationSpeed = 960f;
         [SerializeField] private float attackBufferWindow = 0.3f;
         [SerializeField] private float dodgeBufferWindow = 0.2f;
         [SerializeField] private float parryBufferWindow = 0.2f;
@@ -53,6 +57,10 @@ namespace SoulsLikeIsh.Character.Player
         public float DodgeDuration => dodgeDuration;
         public float ParryWindowDuration => parryWindowDuration;
         public float ParryRecoveryDuration => parryRecoveryDuration;
+        public float AttackRotationSpeed => attackRotationSpeed;
+
+        public Transform FindAttackTarget() =>
+            Combat.TargetFinder.FindBestTarget(transform.position, transform.forward, targetSearchRadius, targetSearchAngle, targetableLayers);
 
         private static readonly int SpeedHash = Animator.StringToHash("Speed");
         private static readonly int AttackHash = Animator.StringToHash("Attack");
