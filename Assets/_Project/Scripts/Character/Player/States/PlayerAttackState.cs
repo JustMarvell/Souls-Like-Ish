@@ -1,5 +1,6 @@
 using UnityEngine;
 using SoulsLikeIsh.Core;
+using SoulsLikeIsh.Input;
 
 namespace SoulsLikeIsh.Character.Player
 {
@@ -12,12 +13,6 @@ namespace SoulsLikeIsh.Character.Player
         private bool _bufferedAttack;
 
         public PlayerAttackState(PlayerController player) => _player = player;
-
-        public void BufferAttack()
-        {
-            if (_timer >= _player.ActiveAttack.ComboWindowStart && _timer <= _player.ActiveAttack.ComboWindowEnd)
-                _bufferedAttack = true;
-        }
 
         public void Enter()
         {
@@ -45,6 +40,12 @@ namespace SoulsLikeIsh.Character.Player
             {
                 _player.WeaponHitbox.DisableHitbox();
                 _hitboxClosed = true;
+            }
+
+            if (!_bufferedAttack && _timer >= attack.ComboWindowStart && _timer <= attack.ComboWindowEnd)
+            {
+                if (_player.Buffer.TryConsume(PlayerAction.Attack, 0.3f))
+                    _bufferedAttack = true;
             }
 
             if (_timer >= attack.Duration)

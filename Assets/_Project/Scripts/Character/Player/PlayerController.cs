@@ -25,6 +25,9 @@ namespace SoulsLikeIsh.Character.Player
         [SerializeField] private float parryWindowDuration = 0.2f;
         [SerializeField] private float parryRecoveryDuration = 0.3f;
         [SerializeField] private float counterWindowDuration = 1.5f;
+        [SerializeField] private float attackBufferWindow = 0.3f;
+        [SerializeField] private float dodgeBufferWindow = 0.2f;
+        [SerializeField] private float parryBufferWindow = 0.2f;
 
         [SerializeField] private float moveSpeed = 4f;
         [SerializeField] private float sprintSpeed = 7f;
@@ -41,6 +44,7 @@ namespace SoulsLikeIsh.Character.Player
         public CharacterController CharacterController { get; private set; }
         public StateMachine StateMachine { get; private set; }
         public DefenseMode CurrentDefenseMode { get; set; }
+        public InputBuffer Buffer { get; } = new InputBuffer();
         public bool CounterWindowOpen { get; private set; }
 
         public float MoveSpeed => moveSpeed;
@@ -95,17 +99,21 @@ namespace SoulsLikeIsh.Character.Player
 
         private void OnEnable()
         {
-            inputReader.OnAttack += HandleAttack;
-            inputReader.OnDodge += HandleDodge;
-            inputReader.OnParry += HandleParry;
+            inputReader.OnAttack += BufferAttack;
+            inputReader.OnDodge += BufferDodge;
+            inputReader.OnParry += BufferParry;
         }
 
         private void OnDisable()
         {
-            inputReader.OnAttack -= HandleAttack;
-            inputReader.OnDodge -= HandleDodge;
-            inputReader.OnParry -= HandleParry;
+            inputReader.OnAttack -= BufferAttack;
+            inputReader.OnDodge -= BufferDodge;
+            inputReader.OnParry -= BufferParry;
         }
+
+        private void BufferAttack() => Buffer.Buffer(PlayerAction.Attack);
+        private void BufferDodge() => Buffer.Buffer(PlayerAction.Dodge);
+        private void BufferParry() => Buffer.Buffer(PlayerAction.Parry);
 
         private void Update()
         {
@@ -117,10 +125,53 @@ namespace SoulsLikeIsh.Character.Player
                 animator.SetFloat(SpeedHash, MoveVelocity.magnitude);
 
             TickCounterWindow();
+            ProcessInputBuffer();
 
-            bool inNeutralState = StateMachine.CurrentState == IdleState || StateMachine.CurrentState == MoveState;
-            if (inNeutralState && inputReader.BlockHeld)
+            if (CanAct() && inputReader.BlockHeld)
                 StateMachine.ChangeState(BlockState);
+        }
+
+        private bool CanAct() => StateMachine.CurrentState == IdleState || StateMachine.CurrentState == MoveState;
+
+        private void ProcessInputBuffer()
+        {
+            if (Buffer.TryConsume(PlayerAction.Attack, attackBufferWindow) && TryHandleAttack())
+                return;
+
+            if (!CanAct()) return;
+
+            if (Buffer.TryConsume(PlayerAction.Parry, parryBufferWindow))
+            {
+                StateMachine.ChangeState(ParryState);
+                return;
+            }
+
+            if (Buffer.TryConsume(PlayerAction.Dodge, dodgeBufferWindow) && Stamina.TrySpend(dodgeStaminaCost))
+                StateMachine.ChangeState(DodgeState);
+        }
+
+        private bool TryHandleAttack()
+        {
+            if (CounterWindowOpen)
+            {
+                CounterWindowOpen = false;
+                ActiveAttack = counterAttack != null ? counterAttack : defaultAttack;
+                PlayCounterAnimation();
+                StateMachine.ChangeState(AttackState);
+                return true;
+            }
+
+            if (!CanAct()) return false;
+
+            if (Stamina.TrySpend(defaultAttack.StaminaCost))
+            {
+                ActiveAttack = defaultAttack;
+                PlayAttackAnimation(ActiveAttack.AnimationState);
+                StateMachine.ChangeState(AttackState);
+                return true;
+            }
+
+            return false;
         }
 
         private void TickCounterWindow()
@@ -148,42 +199,6 @@ namespace SoulsLikeIsh.Character.Player
                 _verticalVelocity = -2f;
             else
                 _verticalVelocity += gravity * Time.deltaTime;
-        }
-
-        private void HandleAttack()
-        {
-            if (CounterWindowOpen)
-            {
-                CounterWindowOpen = false;
-                ActiveAttack = counterAttack != null ? counterAttack : defaultAttack;
-                PlayCounterAnimation();
-                StateMachine.ChangeState(AttackState);
-                return;
-            }
-
-            if (StateMachine.CurrentState == AttackState)
-            {
-                AttackState.BufferAttack();
-                return;
-            }
-
-            if (Stamina.TrySpend(defaultAttack.StaminaCost))
-            {
-                ActiveAttack = defaultAttack;
-                PlayAttackAnimation(ActiveAttack.AnimationState);
-                StateMachine.ChangeState(AttackState);
-            }
-        }
-
-        private void HandleDodge()
-        {
-            if (Stamina.TrySpend(dodgeStaminaCost))
-                StateMachine.ChangeState(DodgeState);
-        }
-
-        private void HandleParry()
-        {
-            StateMachine.ChangeState(ParryState);
         }
 
         public void PlayAttackAnimation(string stateName)
