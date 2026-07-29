@@ -16,5 +16,15 @@ namespace SoulsLikeIsh.Combat
         public float ActiveEnd => activeEnd;
         public int Damage => damage;
         public float StaminaCost => staminaCost;
+
+        [SerializeField] private string animationState = "Attack";
+        [SerializeField] private AttackData nextCombo;
+        [SerializeField] private float comboWindowStart = 0.4f;
+        [SerializeField] private float comboWindowEnd = 0.7f;
+
+        public string AnimationState => animationState;
+        public AttackData NextCombo => nextCombo;
+        public float ComboWindowStart => comboWindowStart;
+        public float ComboWindowEnd => comboWindowEnd;
     }
 }

@@ -161,10 +161,16 @@ namespace SoulsLikeIsh.Character.Player
                 return;
             }
 
+            if (StateMachine.CurrentState == AttackState)
+            {
+                AttackState.BufferAttack();
+                return;
+            }
+
             if (Stamina.TrySpend(defaultAttack.StaminaCost))
             {
                 ActiveAttack = defaultAttack;
-                PlayAttackAnimation();
+                PlayAttackAnimation(ActiveAttack.AnimationState);
                 StateMachine.ChangeState(AttackState);
             }
         }
@@ -180,9 +186,9 @@ namespace SoulsLikeIsh.Character.Player
             StateMachine.ChangeState(ParryState);
         }
 
-        public void PlayAttackAnimation()
+        public void PlayAttackAnimation(string stateName)
         {
-            if (animator != null) animator.SetTrigger(AttackHash);
+            if (animator != null) animator.CrossFadeInFixedTime(stateName, 0.1f);
         }
 
         public void PlayDodgeAnimation()
