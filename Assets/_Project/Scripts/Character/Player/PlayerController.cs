@@ -3,6 +3,7 @@ using SoulsLikeIsh.Core;
 using SoulsLikeIsh.Input;
 using SoulsLikeIsh.Combat;
 using SoulsLikeIsh.Character.Shared;
+using SoulsLikeIsh.CameraSystem;
 
 namespace SoulsLikeIsh.Character.Player
 {
@@ -15,6 +16,7 @@ namespace SoulsLikeIsh.Character.Player
 
         [SerializeField] private PlayerInputReader inputReader;
         [SerializeField] private Transform cameraTransform;
+        [SerializeField] private LockOnController lockOnController;
         [SerializeField] private Animator animator;
         [SerializeField] private Hitbox weaponHitbox;
         [SerializeField] private AttackData defaultAttack;
@@ -41,6 +43,10 @@ namespace SoulsLikeIsh.Character.Player
 
         public PlayerInputReader InputReader => inputReader;
         public Transform CameraTransform => cameraTransform;
+        public bool IsLockedOn => lockOnController != null && lockOnController.IsLocked;
+        public Transform LockOnTarget => lockOnController != null && lockOnController.CurrentTarget != null
+            ? lockOnController.CurrentTarget.LockOnPoint
+            : null;
         public Animator Animator => animator;
         public Hitbox WeaponHitbox => weaponHitbox;
         public AttackData ActiveAttack { get; set; }

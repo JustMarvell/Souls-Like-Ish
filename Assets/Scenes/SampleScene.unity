@@ -375,6 +375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Character.Player.PlayerController
   inputReader: {fileID: 11400000, guid: 638d8f326db7f781ab7a650e7f273f12, type: 2}
   cameraTransform: {fileID: 0}
+  lockOnController: {fileID: 0}
   animator: {fileID: 0}
   weaponHitbox: {fileID: 0}
   defaultAttack: {fileID: 0}
@@ -4408,6 +4409,10 @@ PrefabInstance:
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 6677037145863354355}
+    - target: {fileID: 5792622669506853511, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
+      propertyPath: lockOnController
+      value: 
+      objectReference: {fileID: 1278256444}
     - target: {fileID: 6924203896028620447, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.27
