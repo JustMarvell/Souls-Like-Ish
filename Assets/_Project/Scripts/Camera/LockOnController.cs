@@ -19,8 +19,13 @@ namespace SoulsLikeIsh.CameraSystem
         public ILockOnTarget CurrentTarget { get; private set; }
 
         private Camera _cam;
+        private Transform defaultLookAtTarget;
 
-        private void Awake() => _cam = Camera.main;
+        private void Awake()
+        {
+            _cam = Camera.main;
+            defaultLookAtTarget = cinemachineCamera.Target.LookAtTarget;
+        }
 
         private void OnEnable() => inputReader.OnLockOn += ToggleLock;
         private void OnDisable() => inputReader.OnLockOn -= ToggleLock;
@@ -80,7 +85,7 @@ namespace SoulsLikeIsh.CameraSystem
         {
             CurrentTarget = null;
             IsLocked = false;
-            cinemachineCamera.Target.LookAtTarget = null;
+            cinemachineCamera.Target.LookAtTarget = defaultLookAtTarget;
         }
     }
 }
