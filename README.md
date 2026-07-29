@@ -14,9 +14,7 @@ Vertical slice in progress. Character, Combat, and a basic Enemy are implemented
 | Input | Unity New Input System |
 | Character Model | PicoChan (Humanoid rig) |
 | Animation Source | Free 32 RPG Animations + RPG Character Mecanim Animation Pack FREE, retargeted onto PicoChan via Humanoid Avatar |
-| Target Hardware | Ryzen 5 6600H / Radeon 660M (iGPU) / 16GB RAM (+12GB swap) |
-
-Performance is a first-class constraint, not an afterthought — the Radeon 660M is an entry-level iGPU, so systems are designed with draw call count, shader complexity, LOD, and culling in mind from the start.
+| Current Hardware | Ryzen 5 6600H / Radeon 660M (iGPU) / 16GB RAM (+12GB swap) |
 
 ## Combat Identity
 
@@ -70,8 +68,6 @@ Namespace root: `SoulsLikeIsh`.
 5. ✅ Basic enemy sharing the same combat core (NavMesh chase/attack/stagger/death)
 6. ✅ Attack combo chaining (`AttackData.NextCombo`, combo window buffering) + centralized input buffer (Attack/Dodge/Parry)
 
-Character animation (PicoChan retargeted + Animator Controllers for player and enemy) was set up in parallel with steps 2–5.
-
 ## Known Gaps / Candidates for Next Steps
 
 - No hit/get-hit reaction animation or feedback yet (attacks land but there's no visual "you got hit" indicator)
@@ -82,10 +78,3 @@ Character animation (PicoChan retargeted + Animator Controllers for player and e
 - Combo chain is currently linear (3 hits, no branching); no directional/charged variants yet
 - Input buffering covers Attack/Dodge/Parry only — Jump/Interact/LockOn remain direct event-driven calls
 - Open-world streaming, inventory, save/load, and multiplayer world-visiting remain out of scope for the current vertical slice
-
-## Development Conventions
-
-- Comments kept minimal — only where logic isn't self-explanatory
-- Code organized by category into dedicated folders with matching namespaces
-- Code changes delivered as targeted snippets with file/line references, not full-file rewrites, unless a full rewrite is requested
-- Unity-editor-serialized assets (`.inputactions`, Animator Controllers, ScriptableObject instances, prefabs, `.meta` files) are configured by hand in-editor following step-by-step instructions, not authored as raw files — only `.cs` and other plain-text files are written directly
