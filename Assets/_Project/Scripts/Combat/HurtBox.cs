@@ -11,7 +11,15 @@ namespace SoulsLikeIsh.Combat
 
         private void Awake()
         {
-            GetComponent<Collider>().isTrigger = true;
+            try
+            {
+                GetComponent<Collider>().isTrigger = true;
+            }
+            catch
+            {
+                print ("Something wrong");
+            }
+
             if (ownerRoot == null) ownerRoot = transform.root.gameObject;
         }
     }

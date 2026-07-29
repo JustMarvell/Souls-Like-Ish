@@ -1,80 +1,89 @@
-# [Project Name TBD]
+# Souls-Like-Ish
 
 A single-player soulslike action RPG built in Unity, with an open-world-capable design and future potential for drop-in multiplayer (Genshin-style world visiting). Combat blends **Sekiro** (parry timing, posture), **Zenless Zone Zero** (responsive combos, flashy feedback), and **Elden Ring** (stamina, weight, punishing enemies).
 
-* Don't know anymore what to write here. hope that summarize it.
-
 ## Status
 
-Vertical slice in progress. Current focus: **Character, Combat, Enemy/Boss** systems only. World streaming, inventory, save systems, and multiplayer are deferred.
+Vertical slice in progress. Character, Combat, and a basic Enemy are implemented and playable end-to-end (player can move, attack, dodge, block, parry, and counter; a NavMesh-driven enemy shares the same combat core and can chase, attack, get staggered, and die). World streaming, inventory, save systems, and multiplayer remain deferred.
 
 ## Tech Stack
 
 | Component | Detail |
 |---|---|
-| Engine | Unity 6000.3 HDRP |
+| Engine | Unity 6000.3, URP |
 | Input | Unity New Input System |
-| Target Hardware | Ryzen 5 6600H / Radeon 660M (iGPU) / 16GB RAM |
+| Character Model | PicoChan (Humanoid rig) |
+| Animation Source | Free 32 RPG Animations + RPG Character Mecanim Animation Pack FREE, retargeted onto PicoChan via Humanoid Avatar |
+| Target Hardware | Ryzen 5 6600H / Radeon 660M (iGPU) / 16GB RAM (+12GB swap) |
 
 Performance is a first-class constraint, not an afterthought — the Radeon 660M is an entry-level iGPU, so systems are designed with draw call count, shader complexity, LOD, and culling in mind from the start.
 
 ## Combat Identity
 
 Fast, punishing, parry-centric combat with weight:
-- **Attack** — data-driven combo strings
-- **Dodge** — i-frame windowed evasion
-- **Parry** — tight timing window, rewards aggression (Sekiro-inspired)
-- **Defend/Block** — stamina-gated guard
-- **Counterattack** — triggered off successful parries / posture breaks
+- **Attack** — data-driven via `AttackData` ScriptableObjects (damage, stamina cost, active-frame window)
+- **Dodge** — timed i-frame-style evasion (stamina-gated, root-motion driven)
+- **Parry** — tight binary timing window (no posture meter yet); a successful parry negates the hit, staggers the attacker (via `IStaggerable`), and opens a short counter window. A whiffed parry has a punishable recovery.
+- **Defend/Block** — held guard; fully negates damage but drains stamina per hit taken
+- **Counterattack** — press Attack again within the post-parry window to land a bonus-damage, stamina-free counter using a separate `AttackData`
 
-Player and enemies share the same underlying combat core so the parry system stays fair and readable in both directions.
+Player and enemies share the same underlying combat core (`Hitbox`/`Hurtbox`/`IDamageable`/`AttackData`/`StaminaComponent`) so the parry system stays fair and readable in both directions — the enemy's attack is just another `AttackData` asset running through the exact same hit-detection code as the player's.
 
 ## Project Structure
 
 ```
 Assets/
   _Project/
+    Input/
+      PlayerControls.inputactions        Player + UI action maps
     Scripts/
-      Core/              Game.Core            State machines, event bus, base utilities
-      Input/             Game.Input           Input System wrapper/actions
+      Core/                 SoulsLikeIsh.Core            IState, StateMachine (shared by player & enemy)
+      Input/                SoulsLikeIsh.Input            PlayerInputReader (ScriptableObject), generated wrapper
+      Combat/                SoulsLikeIsh.Combat           Hitbox, Hurtbox, IDamageable, IStaggerable, DamageInfo, AttackData
       Character/
-        Player/          Game.Character.Player
-        Enemy/           Game.Character.Enemy
-        Shared/          Game.Character.Shared  Stats (HP/Stamina/Posture), hit detection
-      Combat/             Game.Combat          Attack data, hitboxes, parry/block/counter logic
-      AI/                 Game.AI              Enemy/boss behavior
-      Camera/             Game.Camera          Lock-on, follow camera
+        Shared/              SoulsLikeIsh.Character.Shared  StaminaComponent, HealthComponent
+        Player/               SoulsLikeIsh.Character.Player  PlayerController + States/ (Idle, Move, Attack, Dodge, Block, Parry)
+        Enemy/                SoulsLikeIsh.Character.Enemy   EnemyController (NavMeshAgent, detection, IDamageable/IStaggerable)
+      AI/                    SoulsLikeIsh.AI                Enemy behavior States/ (Idle, Chase, Attack, Stagger, Dead)
     Animations/
+      Player/                PlayerAnimator controller
+    ScriptableObjects/       AttackData instances (player default/counter, enemy attacks)
     Prefabs/
-    ScriptableObjects/    Attack data, enemy stats, weapon data (designer-friendly, code-decoupled)
 ```
 
-Namespace root: `Game` (placeholder — update once project is named).
+Namespace root: `SoulsLikeIsh`.
 
 ## Core Systems (Vertical Slice Scope)
 
-1. **State Machine** — shared base for Player and Enemy (Idle, Attack, Dodge, Block, Parry, Stagger, Counter)
-2. **Stamina + Posture** — stamina gates actions; posture break opens counterattack windows
-3. **Input Buffering** — enables responsive combos and tight parry timing
-4. **Hitbox/Hurtbox + Parry Window** — frame-window-based parry detection, not simple block toggling
-5. **Data-Driven Attacks** — ScriptableObjects for moves/combos, extendable without code changes
+1. **State Machine** — ✅ shared `Core.StateMachine`/`IState` base, used identically by `PlayerController` and `EnemyController`
+2. **Stamina + Health** — ✅ implemented (`StaminaComponent`, `HealthComponent`); **Posture** not yet implemented — parry is currently a binary timing window rather than a multi-hit stagger meter
+3. **Input Buffering** — ⏳ not yet implemented; input is currently direct event-driven (no buffered/queued inputs during recovery windows)
+4. **Hitbox/Hurtbox + Parry Window** — ✅ frame-window-based hit detection (`Hitbox`/`Hurtbox`/`AttackData`), binary parry window with punishable whiff recovery
+5. **Data-Driven Attacks** — ✅ `AttackData` ScriptableObjects for move timing/damage/stamina cost, no code changes needed to add new attacks
 
-## Build Order
+## Build Order (completed so far)
 
-1. Input wrapper (New Input System actions)
-2. Player state machine skeleton (Idle/Move/Attack/Dodge)
-3. Combat core (hitboxes + stamina)
-4. Parry/Block/Counter layer
-5. Basic enemy sharing the same combat core
+1. ✅ Input wrapper (New Input System actions + `PlayerInputReader`)
+2. ✅ Player state machine skeleton (Idle/Move/Attack/Dodge)
+3. ✅ Combat core (hitboxes + stamina)
+4. ✅ Parry/Block/Counter layer (+ Health, `IStaggerable`)
+5. ✅ Basic enemy sharing the same combat core (NavMesh chase/attack/stagger/death)
 
-## Deferred / Future Considerations
+Character animation (PicoChan retargeted + Animator Controllers for player and enemy) was set up in parallel with steps 2–5.
 
-- Open-world streaming and level design
-- Inventory, save/load systems
-- Multiplayer world-visiting (Genshin-style) — architecture kept in mind but not implemented yet
+## Known Gaps / Candidates for Next Steps
+
+- No hit/get-hit reaction animation or feedback yet (attacks land but there's no visual "you got hit" indicator)
+- Guard-break isn't handled when stamina can't cover a blocked hit (currently just blocks anyway — see `TODO` in `PlayerController.TakeDamage`)
+- Enemy death has no loot/despawn/respawn hookup yet
+- No posture/stagger meter — parry and stagger are binary/instant rather than accumulating
+- No lock-on camera system yet (camera-relative movement currently just uses whatever the assigned camera transform's rotation is)
+- No combo system — each attack is a single `AttackData`, not yet chained into strings
+- Open-world streaming, inventory, save/load, and multiplayer world-visiting remain out of scope for the current vertical slice
 
 ## Development Conventions
 
 - Comments kept minimal — only where logic isn't self-explanatory
 - Code organized by category into dedicated folders with matching namespaces
 - Code changes delivered as targeted snippets with file/line references, not full-file rewrites, unless a full rewrite is requested
+- Unity-editor-serialized assets (`.inputactions`, Animator Controllers, ScriptableObject instances, prefabs, `.meta` files) are configured by hand in-editor following step-by-step instructions, not authored as raw files — only `.cs` and other plain-text files are written directly
