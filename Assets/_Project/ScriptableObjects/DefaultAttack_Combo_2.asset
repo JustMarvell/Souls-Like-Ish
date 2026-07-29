@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf0e5ff932616824ea45bf9b2c5f84a6, type: 3}
-  m_Name: DefaultAttack
+  m_Name: DefaultAttack_Combo_2
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Combat.AttackData
   duration: 1.2
   activeStart: 0.15
   activeEnd: 1
   damage: 10
   staminaCost: 20
-  animationState: Attack
-  nextCombo: {fileID: 11400000, guid: 3f97a34e9aa7519158c21d2dc4e2a272, type: 2}
+  animationState: Attack 2
+  nextCombo: {fileID: 0}
   comboWindowStart: 0.4
   comboWindowEnd: 0.7
