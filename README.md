@@ -43,6 +43,7 @@ Assets/
         Player/               SoulsLikeIsh.Character.Player  PlayerController + States/ (Idle, Move, Attack, Dodge, Block, Parry)
         Enemy/                SoulsLikeIsh.Character.Enemy   EnemyController (NavMeshAgent, detection, IDamageable/IStaggerable)
       AI/                    SoulsLikeIsh.AI                Enemy behavior States/ (Idle, Chase, Attack, Stagger, Dead)
+      Camera/               SoulsLikeIsh.Camera       CameraShaker, CameraZoom, LockOnController
     Animations/
       Player/                PlayerAnimator controller
     ScriptableObjects/       AttackData instances (player default/counter, enemy attacks)
@@ -70,13 +71,14 @@ Namespace root: `SoulsLikeIsh`.
 6. ✅ Attack combo chaining (`AttackData.NextCombo`, combo window buffering) + centralized input buffer (Attack/Dodge/Parry)
 7. ✅ A lightweight soft target lock (stap to target on attack + line of sight during swing, rotate only the character model not the camera)
 8. ✅ Hit reaction feedback — masked upper-body Animator layer (`HitReact`) driven from `PlayerController`/`EnemyController.TakeDamage`, separate from the full-body `Stagger` interrupt used for parry punishes
+9. ✅ Implemented Lock-On camera system and target detection and player-facing/strafe movement based on the lock on target. (strafe movement animation still pending)
 
 ## Known Gaps / Candidates for Next Steps
 
 - Guard-break isn't handled when stamina can't cover a blocked hit (currently just blocks anyway — see `TODO` in `PlayerController.TakeDamage`)
 - Enemy death has no loot/despawn/respawn hookup yet
 - No posture/stagger meter — parry and stagger are binary/instant rather than accumulating
-- No lock-on camera system yet (camera-relative movement currently just uses whatever the assigned camera transform's rotation is)
+- Lock on camera system and player-facing/strafe movement is implemented but the animation still use the default forward run animation instead of multidirectional animation.
 - Combo chain is currently linear (3 hits, no branching); no directional/charged variants yet
 - Input buffering covers Attack/Dodge/Parry only — Jump/Interact/LockOn remain direct event-driven calls
 - Open-world streaming, inventory, save/load, and multiplayer world-visiting remain out of scope for the current vertical slice
