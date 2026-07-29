@@ -183,6 +183,15 @@ namespace SoulsLikeIsh.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Zoom"",
+                    ""type"": ""Value"",
+                    ""id"": ""55b9c5a2-6905-478e-8ecd-d7cb632a5c25"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -449,6 +458,17 @@ namespace SoulsLikeIsh.Input
                     ""action"": ""LockOn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f2ae2381-5ef9-42a2-b78e-752170c99701"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Zoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -473,6 +493,7 @@ namespace SoulsLikeIsh.Input
             m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
             m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
             m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
+            m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
         }
 
         ~@PlayerControls()
@@ -563,6 +584,7 @@ namespace SoulsLikeIsh.Input
         private readonly InputAction m_Player_Sprint;
         private readonly InputAction m_Player_Interact;
         private readonly InputAction m_Player_LockOn;
+        private readonly InputAction m_Player_Zoom;
         /// <summary>
         /// Provides access to input actions defined in input action map "Player".
         /// </summary>
@@ -614,6 +636,10 @@ namespace SoulsLikeIsh.Input
             /// Provides access to the underlying input action "Player/LockOn".
             /// </summary>
             public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
+            /// <summary>
+            /// Provides access to the underlying input action "Player/Zoom".
+            /// </summary>
+            public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -670,6 +696,9 @@ namespace SoulsLikeIsh.Input
                 @LockOn.started += instance.OnLockOn;
                 @LockOn.performed += instance.OnLockOn;
                 @LockOn.canceled += instance.OnLockOn;
+                @Zoom.started += instance.OnZoom;
+                @Zoom.performed += instance.OnZoom;
+                @Zoom.canceled += instance.OnZoom;
             }
 
             /// <summary>
@@ -711,6 +740,9 @@ namespace SoulsLikeIsh.Input
                 @LockOn.started -= instance.OnLockOn;
                 @LockOn.performed -= instance.OnLockOn;
                 @LockOn.canceled -= instance.OnLockOn;
+                @Zoom.started -= instance.OnZoom;
+                @Zoom.performed -= instance.OnZoom;
+                @Zoom.canceled -= instance.OnZoom;
             }
 
             /// <summary>
@@ -834,6 +866,13 @@ namespace SoulsLikeIsh.Input
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnLockOn(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Zoom" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnZoom(InputAction.CallbackContext context);
         }
     }
 }
