@@ -42,10 +42,14 @@ namespace SoulsLikeIsh.Character.Enemy
         public EnemyStaggerState StaggerState { get; private set; }
         public EnemyDeadState DeadState { get; private set; }
 
+        private int _hitReactLayer = -1;
+        private float _hitReactTimer;
+
         private static readonly int SpeedHash = Animator.StringToHash("Speed");
         private static readonly int AttackHash = Animator.StringToHash("Attack");
         private static readonly int StaggerHash = Animator.StringToHash("Stagger");
         private static readonly int DeathHash = Animator.StringToHash("Death");
+        private static readonly int HitReactHash = Animator.StringToHash("HitReact");
 
         private void Awake()
         {
@@ -65,6 +69,8 @@ namespace SoulsLikeIsh.Character.Enemy
                 var playerObj = GameObject.FindGameObjectWithTag("Player");
                 if (playerObj != null) player = playerObj.transform;
             }
+
+            _hitReactLayer = animator != null ? animator.GetLayerIndex("HitReact") : -1;
         }
 
         private void Start() => StateMachine.ChangeState(IdleState);
@@ -75,6 +81,7 @@ namespace SoulsLikeIsh.Character.Enemy
         private void Update()
         {
             StateMachine.Tick();
+            TickHitReact();
             if (animator != null)
                 animator.SetFloat(SpeedHash, Agent.velocity.magnitude);
         }
@@ -108,9 +115,30 @@ namespace SoulsLikeIsh.Character.Enemy
 
         public void PlayAttackAnimation() { if (animator != null) animator.SetTrigger(AttackHash); }
         public void PlayStaggerAnimation() { if (animator != null) animator.SetTrigger(StaggerHash); }
+
+        public void PlayHitReaction()
+        {
+            if (animator == null || _hitReactLayer < 0) return;
+            animator.SetLayerWeight(_hitReactLayer, 1f);
+            animator.SetTrigger(HitReactHash);
+            _hitReactTimer = 0.4f;
+        }
+
+        private void TickHitReact()
+        {
+            if (_hitReactTimer <= 0f) return;
+            _hitReactTimer -= Time.deltaTime;
+            if (_hitReactTimer <= 0f) animator.SetLayerWeight(_hitReactLayer, 0f);
+        }
+
         public void PlayDeathAnimation() { if (animator != null) animator.SetTrigger(DeathHash); }
 
-        public void TakeDamage(DamageInfo damageInfo) => Health.TakeDamage(damageInfo.Amount);
+        public void TakeDamage(DamageInfo damageInfo)
+        {
+            Health.TakeDamage(damageInfo.Amount);
+            if (!Health.IsDead && StateMachine.CurrentState != StaggerState)
+                PlayHitReaction();
+        }
 
         public void ApplyStagger()
         {

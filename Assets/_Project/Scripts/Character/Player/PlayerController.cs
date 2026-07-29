@@ -25,6 +25,7 @@ namespace SoulsLikeIsh.Character.Player
         [SerializeField] private float parryWindowDuration = 0.2f;
         [SerializeField] private float parryRecoveryDuration = 0.3f;
         [SerializeField] private float counterWindowDuration = 1.5f;
+        [SerializeField] private float hitReactDuration = 0.4f;
         [SerializeField] private LayerMask targetableLayers;
         [SerializeField] private float targetSearchRadius = 6f;
         [SerializeField] private float targetSearchAngle = 70f;
@@ -69,6 +70,7 @@ namespace SoulsLikeIsh.Character.Player
         private static readonly int ParryHash = Animator.StringToHash("Parry");
         private static readonly int BlockHitHash = Animator.StringToHash("BlockHit");
         private static readonly int IsBlockingHash = Animator.StringToHash("IsBlocking");
+        private static readonly int HitReactHash = Animator.StringToHash("HitReact");
 
         public Vector3 MoveVelocity { get; set; }
         public bool RootMotionEnabled { get; set; }
@@ -82,6 +84,8 @@ namespace SoulsLikeIsh.Character.Player
 
         private float _verticalVelocity;
         private float _counterWindowTimer;
+        private int _hitReactLayer = -1;
+        private float _hitReactTimer;
 
         private void Awake()
         {
@@ -96,6 +100,8 @@ namespace SoulsLikeIsh.Character.Player
             DodgeState = new PlayerDodgeState(this);
             BlockState = new PlayerBlockState(this);
             ParryState = new PlayerParryState(this);
+
+            _hitReactLayer = animator != null ? animator.GetLayerIndex("HitReact") : -1;
         }
 
         private void Start()
@@ -133,6 +139,7 @@ namespace SoulsLikeIsh.Character.Player
                 animator.SetFloat(SpeedHash, MoveVelocity.magnitude);
 
             TickCounterWindow();
+            TickHitReact();
             ProcessInputBuffer();
 
             if (CanAct() && inputReader.BlockHeld)
@@ -234,6 +241,21 @@ namespace SoulsLikeIsh.Character.Player
             if (animator != null) animator.SetTrigger(BlockHitHash);
         }
 
+        public void PlayHitReaction()
+        {
+            if (animator == null || _hitReactLayer < 0) return;
+            animator.SetLayerWeight(_hitReactLayer, 1f);
+            animator.SetTrigger(HitReactHash);
+            _hitReactTimer = hitReactDuration;
+        }
+
+        private void TickHitReact()
+        {
+            if (_hitReactTimer <= 0f) return;
+            _hitReactTimer -= Time.deltaTime;
+            if (_hitReactTimer <= 0f) animator.SetLayerWeight(_hitReactLayer, 0f);
+        }
+
         public void SetBlocking(bool isBlocking)
         {
             if (animator != null) animator.SetBool(IsBlockingHash, isBlocking);
@@ -268,6 +290,7 @@ namespace SoulsLikeIsh.Character.Player
 
                 default:
                     Health.TakeDamage(damageInfo.Amount);
+                    PlayHitReaction();
                     break;
             }
         }
