@@ -67,6 +67,7 @@ Namespace root: `SoulsLikeIsh`.
 4. ✅ Parry/Block/Counter layer (+ Health, `IStaggerable`)
 5. ✅ Basic enemy sharing the same combat core (NavMesh chase/attack/stagger/death)
 6. ✅ Attack combo chaining (`AttackData.NextCombo`, combo window buffering) + centralized input buffer (Attack/Dodge/Parry)
+7. ✅ A lightweight soft target lock (stap to target on attack + line of sight during swing, rotate only the character model not the camera)
 
 ## Known Gaps / Candidates for Next Steps
 
