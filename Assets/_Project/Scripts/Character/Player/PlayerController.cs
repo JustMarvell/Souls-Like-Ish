@@ -89,6 +89,8 @@ namespace SoulsLikeIsh.Character.Player
         private void Start()
         {
             StateMachine.ChangeState(IdleState);
+
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         private void OnEnable()

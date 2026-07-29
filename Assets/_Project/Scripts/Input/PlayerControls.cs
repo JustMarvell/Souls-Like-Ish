@@ -192,6 +192,24 @@ namespace SoulsLikeIsh.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""LookX"",
+                    ""type"": ""Value"",
+                    ""id"": ""538993f7-9042-433b-82f3-ca632ee07384"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""LookY"",
+                    ""type"": ""Value"",
+                    ""id"": ""ff9251a2-29eb-4e06-b2fd-a6407f9f572d"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -469,6 +487,28 @@ namespace SoulsLikeIsh.Input
                     ""action"": ""Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a11668b1-8cc8-4377-b21c-8ee33a00630d"",
+                    ""path"": ""<Mouse>/delta/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LookX"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b80ad2dc-2f9c-45bd-adf9-e7a2039e31c1"",
+                    ""path"": ""<Mouse>/delta/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LookY"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -494,6 +534,8 @@ namespace SoulsLikeIsh.Input
             m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
             m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
             m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
+            m_Player_LookX = m_Player.FindAction("LookX", throwIfNotFound: true);
+            m_Player_LookY = m_Player.FindAction("LookY", throwIfNotFound: true);
         }
 
         ~@PlayerControls()
@@ -585,6 +627,8 @@ namespace SoulsLikeIsh.Input
         private readonly InputAction m_Player_Interact;
         private readonly InputAction m_Player_LockOn;
         private readonly InputAction m_Player_Zoom;
+        private readonly InputAction m_Player_LookX;
+        private readonly InputAction m_Player_LookY;
         /// <summary>
         /// Provides access to input actions defined in input action map "Player".
         /// </summary>
@@ -640,6 +684,14 @@ namespace SoulsLikeIsh.Input
             /// Provides access to the underlying input action "Player/Zoom".
             /// </summary>
             public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
+            /// <summary>
+            /// Provides access to the underlying input action "Player/LookX".
+            /// </summary>
+            public InputAction @LookX => m_Wrapper.m_Player_LookX;
+            /// <summary>
+            /// Provides access to the underlying input action "Player/LookY".
+            /// </summary>
+            public InputAction @LookY => m_Wrapper.m_Player_LookY;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -699,6 +751,12 @@ namespace SoulsLikeIsh.Input
                 @Zoom.started += instance.OnZoom;
                 @Zoom.performed += instance.OnZoom;
                 @Zoom.canceled += instance.OnZoom;
+                @LookX.started += instance.OnLookX;
+                @LookX.performed += instance.OnLookX;
+                @LookX.canceled += instance.OnLookX;
+                @LookY.started += instance.OnLookY;
+                @LookY.performed += instance.OnLookY;
+                @LookY.canceled += instance.OnLookY;
             }
 
             /// <summary>
@@ -743,6 +801,12 @@ namespace SoulsLikeIsh.Input
                 @Zoom.started -= instance.OnZoom;
                 @Zoom.performed -= instance.OnZoom;
                 @Zoom.canceled -= instance.OnZoom;
+                @LookX.started -= instance.OnLookX;
+                @LookX.performed -= instance.OnLookX;
+                @LookX.canceled -= instance.OnLookX;
+                @LookY.started -= instance.OnLookY;
+                @LookY.performed -= instance.OnLookY;
+                @LookY.canceled -= instance.OnLookY;
             }
 
             /// <summary>
@@ -873,6 +937,20 @@ namespace SoulsLikeIsh.Input
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnZoom(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "LookX" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnLookX(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "LookY" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnLookY(InputAction.CallbackContext context);
         }
     }
 }

@@ -73,5 +73,15 @@ namespace SoulsLikeIsh.Input
 
         void PlayerControls.IPlayerActions.OnBlock(InputAction.CallbackContext ctx) => BlockHeld = ctx.performed;
         void PlayerControls.IPlayerActions.OnSprint(InputAction.CallbackContext ctx) => SprintHeld = ctx.performed;
+
+        public void OnLookX(InputAction.CallbackContext context)
+        {
+            
+        }
+
+        public void OnLookY(InputAction.CallbackContext context)
+        {
+            
+        }
     }
 }
