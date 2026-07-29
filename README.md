@@ -57,7 +57,8 @@ Namespace root: `SoulsLikeIsh`.
 2. **Stamina + Health** — ✅ implemented (`StaminaComponent`, `HealthComponent`); **Posture** not yet implemented — parry is currently a binary timing window rather than a multi-hit stagger meter
 3. **Input Buffering** — ✅ `InputBuffer` timestamps buffered actions (Attack/Dodge/Parry); `PlayerController.ProcessInputBuffer()` consumes them once the player returns to an actionable state, instead of dropping inputs during recovery windows
 4. **Hitbox/Hurtbox + Parry Window** — ✅ frame-window-based hit detection (`Hitbox`/`Hurtbox`/`AttackData`), binary parry window with punishable whiff recovery
-5. **Data-Driven Attacks** — ✅ `AttackData` ScriptableObjects for move timing/damage/stamina cost, no code changes needed to add new attacks
+5. **Hit Feedback** — ✅ masked-layer upper-body flinch (`HitReact`) on normal hits, full-body `Stagger` state reserved for parry-punish CC
+6. **Data-Driven Attacks** — ✅ `AttackData` ScriptableObjects for move timing/damage/stamina cost, no code changes needed to add new attacks
 
 ## Build Order (completed so far)
 
@@ -68,10 +69,10 @@ Namespace root: `SoulsLikeIsh`.
 5. ✅ Basic enemy sharing the same combat core (NavMesh chase/attack/stagger/death)
 6. ✅ Attack combo chaining (`AttackData.NextCombo`, combo window buffering) + centralized input buffer (Attack/Dodge/Parry)
 7. ✅ A lightweight soft target lock (stap to target on attack + line of sight during swing, rotate only the character model not the camera)
+8. ✅ Hit reaction feedback — masked upper-body Animator layer (`HitReact`) driven from `PlayerController`/`EnemyController.TakeDamage`, separate from the full-body `Stagger` interrupt used for parry punishes
 
 ## Known Gaps / Candidates for Next Steps
 
-- No hit/get-hit reaction animation or feedback yet (attacks land but there's no visual "you got hit" indicator)
 - Guard-break isn't handled when stamina can't cover a blocked hit (currently just blocks anyway — see `TODO` in `PlayerController.TakeDamage`)
 - Enemy death has no loot/despawn/respawn hookup yet
 - No posture/stagger meter — parry and stagger are binary/instant rather than accumulating
