@@ -16,6 +16,7 @@ namespace SoulsLikeIsh.Input
 
         public Vector2 MoveInput { get; private set; }
         public Vector2 LookInput { get; private set; }
+        public float ZoomInput { get; private set; }
         public bool BlockHeld { get; private set; }
         public bool SprintHeld { get; private set; }
 
@@ -38,6 +39,7 @@ namespace SoulsLikeIsh.Input
 
         void PlayerControls.IPlayerActions.OnMove(InputAction.CallbackContext ctx) => MoveInput = ctx.ReadValue<Vector2>();
         void PlayerControls.IPlayerActions.OnLook(InputAction.CallbackContext ctx) => LookInput = ctx.ReadValue<Vector2>();
+        void PlayerControls.IPlayerActions.OnZoom(InputAction.CallbackContext ctx) => ZoomInput = ctx.ReadValue<float>();
 
         void PlayerControls.IPlayerActions.OnAttack(InputAction.CallbackContext ctx)
         {
