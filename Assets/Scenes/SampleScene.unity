@@ -354,6 +354,15 @@ MonoBehaviour:
   parryWindowDuration: 0.2
   parryRecoveryDuration: 0.3
   counterWindowDuration: 1.5
+  targetableLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  targetSearchRadius: 6
+  targetSearchAngle: 70
+  attackRotationSpeed: 960
+  attackBufferWindow: 0.3
+  dodgeBufferWindow: 0.2
+  parryBufferWindow: 0.2
   moveSpeed: 4
   sprintSpeed: 7
   rotationSpeed: 540
