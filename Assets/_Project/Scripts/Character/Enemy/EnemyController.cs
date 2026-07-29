@@ -10,11 +10,12 @@ namespace SoulsLikeIsh.Character.Enemy
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(StaminaComponent))]
     [RequireComponent(typeof(HealthComponent))]
-    public class EnemyController : MonoBehaviour, IDamageable, IStaggerable
+    public class EnemyController : MonoBehaviour, IDamageable, IStaggerable, ILockOnTarget
     {
         [SerializeField] private Transform player;
         [SerializeField] private Animator animator;
         [SerializeField] private Hitbox weaponHitbox;
+        [SerializeField] private Transform lockOnPoint;
         [SerializeField] private AttackData attackData;
 
         [SerializeField] private float detectionRange = 10f;
@@ -25,6 +26,8 @@ namespace SoulsLikeIsh.Character.Enemy
 
         public Transform Player => player;
         public Hitbox WeaponHitbox => weaponHitbox;
+        public Transform LockOnPoint => lockOnPoint != null ? lockOnPoint : transform;
+        public bool IsTargetable => !Health.IsDead;
         public AttackData AttackData => attackData;
         public NavMeshAgent Agent { get; private set; }
         public StaminaComponent Stamina { get; private set; }

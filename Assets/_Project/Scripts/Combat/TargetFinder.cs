@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SoulsLikeIsh.Combat
@@ -24,6 +25,20 @@ namespace SoulsLikeIsh.Combat
                 }
             }
             return best;
+        }
+
+        public static List<ILockOnTarget> FindLockOnTargets(Vector3 origin, float radius, LayerMask mask)
+        {
+            var hits = Physics.OverlapSphere(origin, radius, mask);
+            var targets = new List<ILockOnTarget>();
+
+            foreach (var hit in hits)
+            {
+                var target = hit.GetComponentInParent<ILockOnTarget>();
+                if (target != null && target.IsTargetable && !targets.Contains(target))
+                    targets.Add(target);
+            }
+            return targets;
         }
     }
 }

@@ -183,6 +183,37 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 8f80b7f29166ad8289c72f4b759972c5, type: 2}
   m_BuildHeightMesh: 0
+--- !u!1 &354765883
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 354765884}
+  m_Layer: 6
+  m_Name: LockOnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &354765884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 354765883}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.125, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5324505941385386917}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -354,6 +385,7 @@ MonoBehaviour:
   parryWindowDuration: 0.2
   parryRecoveryDuration: 0.3
   counterWindowDuration: 1.5
+  hitReactDuration: 0.4
   targetableLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -674,6 +706,59 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1360511817}
   m_SourcePrefab: {fileID: 100100000, guid: 78b5833cb648e784c8e092dfcc5dcf5a, type: 3}
+--- !u!1 &1278256443
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1278256445}
+  - component: {fileID: 1278256444}
+  m_Layer: 0
+  m_Name: _Managers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1278256444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1278256443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 274973f9e01178ffab28a6a498362352, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.CameraSystem.LockOnController
+  cinemachineCamera: {fileID: 1985250641}
+  inputReader: {fileID: 11400000, guid: 638d8f326db7f781ab7a650e7f273f12, type: 2}
+  player: {fileID: 7544977337362600887}
+  targetableLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  searchRadius: 12
+  maxLockAngle: 60
+  breakDistance: 15
+--- !u!4 &1278256445
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1278256443}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1321700864
 GameObject:
   m_ObjectHideFlags: 0
@@ -1178,6 +1263,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1894784814}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1985250641 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2093682372282360225, guid: 5962c7f6f919bdfec97fe18dc8208725, type: 3}
+  m_PrefabInstance: {fileID: 1633235297514540279}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
 --- !u!1 &51939007835336180
 GameObject:
   m_ObjectHideFlags: 0
@@ -3031,6 +3127,7 @@ Transform:
   m_Children:
   - {fileID: 8357691014873944113}
   - {fileID: 3729771717557430053}
+  - {fileID: 354765884}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -99.891, z: 0}
 --- !u!114 &5324505941385386918
@@ -3084,6 +3181,7 @@ MonoBehaviour:
   player: {fileID: 0}
   animator: {fileID: 2235013732835410399}
   weaponHitbox: {fileID: 1360511812}
+  lockOnPoint: {fileID: 354765884}
   attackData: {fileID: 11400000, guid: 028bdd3855a3dfd16b023b2aa028115a, type: 2}
   detectionRange: 10
   attackRange: 2
@@ -4575,3 +4673,4 @@ SceneRoots:
   - {fileID: 1777783361}
   - {fileID: 2919954}
   - {fileID: 1633235297514540279}
+  - {fileID: 1278256445}
