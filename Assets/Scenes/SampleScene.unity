@@ -543,7 +543,8 @@ MonoBehaviour:
   targetSearchRadius: 6
   targetSearchAngle: 70
   attackRotationSpeed: 960
-  attackWarpStopDistance: 1.2
+  attackTraversalSpeed: 8
+  attackStopDistance: 1.2
   attackBufferWindow: 0.3
   dodgeBufferWindow: 0.2
   parryBufferWindow: 0.2
