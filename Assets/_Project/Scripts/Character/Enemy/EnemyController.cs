@@ -156,12 +156,14 @@ namespace SoulsLikeIsh.Character.Enemy
             Health.TakeDamage(damageInfo.Amount);
             if (Health.IsDead) return;
 
-            if (Poise != null && StateMachine.CurrentState != StaggerState && Poise.ApplyStagger(damageInfo.StaggerPower))
+            if (StateMachine.CurrentState == StaggerState) return;
+
+            if (damageInfo.GuaranteedStagger || (Poise != null && Poise.ApplyStagger(damageInfo.StaggerPower)))
             {
                 StaggerState.SetType(damageInfo.StaggerType);
                 StateMachine.ChangeState(StaggerState);
             }
-            else if (StateMachine.CurrentState != StaggerState)
+            else
             {
                 PlayHitReaction();
             }

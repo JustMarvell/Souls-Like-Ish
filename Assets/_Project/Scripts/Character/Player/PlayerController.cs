@@ -341,7 +341,7 @@ namespace SoulsLikeIsh.Character.Player
                 default:
                     Health.TakeDamage(damageInfo.Amount);
                     if (Health.IsDead) break;
-                    if (Poise != null && Poise.ApplyStagger(damageInfo.StaggerPower))
+                    if (damageInfo.GuaranteedStagger || (Poise != null && Poise.ApplyStagger(damageInfo.StaggerPower)))
                     {
                         StaggerState.SetType(damageInfo.StaggerType);
                         StateMachine.ChangeState(StaggerState);

@@ -21,7 +21,7 @@ namespace SoulsLikeIsh.AI
             _enemy.Agent.isStopped = true;
             _enemy.Agent.updateRotation = false;
             _enemy.Stamina.TrySpend(_enemy.StaminaCostPerAttack);
-            _enemy.WeaponHitbox.SetAttack(_enemy.AttackData.Damage, _enemy.AttackData.StaggerPower, _enemy.AttackData.StaggerType);
+            _enemy.WeaponHitbox.SetAttack(_enemy.AttackData.Damage, _enemy.AttackData.StaggerPower, _enemy.AttackData.StaggerType, _enemy.AttackData.GuaranteedStagger);
             _enemy.FacePlayer();
             _enemy.PlayAttackAnimation();
         }

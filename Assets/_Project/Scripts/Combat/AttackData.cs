@@ -12,6 +12,7 @@ namespace SoulsLikeIsh.Combat
         [SerializeField] private float staminaCost = 20f;
         [SerializeField] private int staggerPower = 20;
         [SerializeField] private StaggerType staggerType = StaggerType.Small;
+        [SerializeField] private bool guaranteedStagger = false;
 
         public float Duration => duration;
         public float ActiveStart => activeStart;
@@ -20,6 +21,7 @@ namespace SoulsLikeIsh.Combat
         public float StaminaCost => staminaCost;
         public int StaggerPower => staggerPower;
         public StaggerType StaggerType => staggerType;
+        public bool GuaranteedStagger => guaranteedStagger;
 
         [SerializeField] private string animationState = "Attack";
         [SerializeField] private AttackData nextCombo;
