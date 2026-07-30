@@ -4,7 +4,7 @@ A single-player soulslike action RPG built in Unity, with an open-world-capable 
 
 ## Status
 
-Vertical slice in progress. Character, Combat, and a basic Enemy are implemented and playable end-to-end (player can move, attack, dodge, block, parry, and counter; a NavMesh-driven enemy shares the same combat core and can chase, attack, get staggered, and die). World streaming, inventory, save systems, and multiplayer remain deferred.
+Vertical slice in progress. Character, Combat, and a basic Enemy are implemented and playable end-to-end (player can move, attack, dodge, block, parry, and counter; a NavMesh-driven enemy shares the same combat core and can chase, attack, get staggered, and die). A first POI/encounter system is in place — grouped enemies pack-alert off a shared trigger zone, leash back and heal on player disengage, and unlock a chest on full clear. World streaming, inventory, save systems, and multiplayer remain deferred.
 
 ## Tech Stack
 
@@ -42,7 +42,9 @@ Assets/
         Shared/              SoulsLikeIsh.Character.Shared  StaminaComponent, HealthComponent
         Player/               SoulsLikeIsh.Character.Player  PlayerController + States/ (Idle, Move, Attack, Dodge, Block, Parry)
         Enemy/                SoulsLikeIsh.Character.Enemy   EnemyController (NavMeshAgent, detection, IDamageable/IStaggerable)
-      AI/                    SoulsLikeIsh.AI                Enemy behavior States/ (Idle, Chase, Attack, Stagger, Dead)
+      AI/                    SoulsLikeIsh.AI                Enemy behavior States/ (Idle, Chase, Attack, Stagger, Dead, Return)
+      World/
+        Encounters/          SoulsLikeIsh.World.Encounters  EncounterArea, EncounterChest, IEncounterMember
       Camera/               SoulsLikeIsh.Camera       CameraShaker, CameraZoom, LockOnController
     Animations/
       Player/                PlayerAnimator controller
@@ -61,6 +63,7 @@ Namespace root: `SoulsLikeIsh`.
 5. **Hit Feedback** — ✅ masked-layer upper-body flinch (`HitReact`) on normal hits, full-body `Stagger` state reserved for parry-punish CC
 6. **Data-Driven Attacks** — ✅ `AttackData` ScriptableObjects for move timing/damage/stamina cost, no code changes needed to add new attacks
 7. **Locomotion Blending** — ✅ 2D Freeform Cartesian blend tree (`MoveX`/`MoveY`) on `PlayerAnimator`; local-space velocity drives directional strafe clips, collapses to forward-only blending automatically when not locked on (no separate strafe mode/bool needed)
+8. **Encounter/POI System** — ✅ `EncounterArea` groups guardian enemies + an `EncounterChest` behind a shared trigger zone: one enemy spotting the player pack-alerts the whole group into `ChaseState`; leaving the zone sends all living enemies into a new `EnemyReturnState` (nav back to spawn, full heal, back to `IdleState`); chest unlocks once every guardian is dead and is claimed via the existing `Interact` action
 
 ## Build Order (completed so far)
 
@@ -74,6 +77,7 @@ Namespace root: `SoulsLikeIsh`.
 8. ✅ Hit reaction feedback — masked upper-body Animator layer (`HitReact`) driven from `PlayerController`/`EnemyController.TakeDamage`, separate from the full-body `Stagger` interrupt used for parry punishes
 9. ✅ Implemented Lock-On camera system and target detection and player-facing/strafe movement based on the lock on target
 10. ✅ 2D directional strafe locomotion (`MoveX`/`MoveY` local-space blend tree, 8-directional clips) replacing the single forward-run animation during lock-on strafing
+11. ✅ POI/Encounter system — `EncounterArea` (group alert + leash-back + chest unlock), `EncounterChest` (interact-to-claim), `EnemyReturnState` (leash navigation + full heal reset)
 
 ## Known Gaps / Candidates for Next Steps
 
@@ -83,3 +87,5 @@ Namespace root: `SoulsLikeIsh`.
 - Combo chain is currently linear (3 hits, no branching); no directional/charged variants yet
 - Input buffering covers Attack/Dodge/Parry only — Jump/Interact/LockOn remain direct event-driven calls
 - Open-world streaming, inventory, save/load, and multiplayer world-visiting remain out of scope for the current vertical slice
+- Chest claim has no loot/inventory hookup yet (`EncounterChest.TryClaim` is a stub — see `TODO`)
+- Encounter groups are hand-wired via a serialized enemy list; no runtime spawner/pooling for POIs yet
