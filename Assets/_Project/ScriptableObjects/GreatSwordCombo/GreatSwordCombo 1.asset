@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf0e5ff932616824ea45bf9b2c5f84a6, type: 3}
   m_Name: GreatSwordCombo 1
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Combat.AttackData
-  duration: 0.5
+  duration: 1.267
   activeStart: 0.15
-  activeEnd: 0.3
+  activeEnd: 1.2
   damage: 10
-  staminaCost: 20
+  staminaCost: 0
   animationState: Attack 1
   nextCombo: {fileID: 11400000, guid: 583a5b0c8dee17801b46aa4213b0b46e, type: 2}
   comboWindowStart: 0.4

@@ -393,6 +393,7 @@ MonoBehaviour:
   targetSearchRadius: 6
   targetSearchAngle: 70
   attackRotationSpeed: 960
+  attackWarpStopDistance: 1.2
   attackBufferWindow: 0.3
   dodgeBufferWindow: 0.2
   parryBufferWindow: 0.2
@@ -4605,6 +4606,10 @@ PrefabInstance:
       value: CharacterTest_PICO
       objectReference: {fileID: 0}
     - target: {fileID: 5792622669506853511, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
+      propertyPath: defaultAttack
+      value: 
+      objectReference: {fileID: 11400000, guid: c8e37313aaece9566bc6cb218df8a39c, type: 2}
+    - target: {fileID: 5792622669506853511, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 6677037145863354355}
@@ -4612,6 +4617,10 @@ PrefabInstance:
       propertyPath: lockOnController
       value: 
       objectReference: {fileID: 1278256444}
+    - target: {fileID: 5792622669506853511, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
+      propertyPath: attackWarpStopDistance
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 6924203896028620447, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.27
