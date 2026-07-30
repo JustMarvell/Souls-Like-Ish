@@ -12,8 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf0e5ff932616824ea45bf9b2c5f84a6, type: 3}
   m_Name: CounterAttack
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Combat.AttackData
-  duration: 0.8
+  duration: 1.2
   activeStart: 0.15
-  activeEnd: 0.3
+  activeEnd: 1
   damage: 15
   staminaCost: 20
+  staggerPower: 100
+  staggerType: 1
+  guaranteedStagger: 1
+  animationState: Counter
+  nextCombo: {fileID: 0}
+  comboWindowStart: 0.4
+  comboWindowEnd: 0.7
+  canWarp: 1
