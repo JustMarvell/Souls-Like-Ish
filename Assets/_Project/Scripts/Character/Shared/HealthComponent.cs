@@ -25,5 +25,7 @@ namespace SoulsLikeIsh.Character.Shared
 
             if (IsDead) OnDeath?.Invoke();
         }
+
+        public void ResetToFull() => Current = maxHealth;
     }
 }

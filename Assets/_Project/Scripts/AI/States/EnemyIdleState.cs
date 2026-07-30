@@ -16,7 +16,11 @@ namespace SoulsLikeIsh.AI
 
         public void Tick()
         {
-            if (_enemy.CanSeePlayer())
+            if (!_enemy.CanSeePlayer()) return;
+
+            if (_enemy.Encounter != null)
+                _enemy.Encounter.AlertGroup(_enemy.Player);
+            else
                 _enemy.StateMachine.ChangeState(_enemy.ChaseState);
         }
 

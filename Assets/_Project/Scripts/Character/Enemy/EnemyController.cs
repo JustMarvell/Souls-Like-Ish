@@ -4,6 +4,7 @@ using SoulsLikeIsh.Core;
 using SoulsLikeIsh.Combat;
 using SoulsLikeIsh.Character.Shared;
 using SoulsLikeIsh.AI;
+using SoulsLikeIsh.World.Encounters;
 
 namespace SoulsLikeIsh.Character.Enemy
 {
@@ -33,6 +34,8 @@ namespace SoulsLikeIsh.Character.Enemy
         public StaminaComponent Stamina { get; private set; }
         public HealthComponent Health { get; private set; }
         public StateMachine StateMachine { get; private set; }
+        public Vector3 SpawnPoint { get; private set; }
+        public EncounterArea Encounter { get; set; }
 
         public float DetectionRange => detectionRange;
         public float AttackRange => attackRange;
@@ -44,6 +47,7 @@ namespace SoulsLikeIsh.Character.Enemy
         public EnemyAttackState AttackState { get; private set; }
         public EnemyStaggerState StaggerState { get; private set; }
         public EnemyDeadState DeadState { get; private set; }
+        public EnemyReturnState ReturnState { get; private set; }
 
         private int _hitReactLayer = -1;
         private float _hitReactTimer;
@@ -66,6 +70,8 @@ namespace SoulsLikeIsh.Character.Enemy
             AttackState = new EnemyAttackState(this);
             StaggerState = new EnemyStaggerState(this);
             DeadState = new EnemyDeadState(this);
+            ReturnState = new EnemyReturnState(this);
+            SpawnPoint = transform.position;
 
             if (player == null)
             {
@@ -150,5 +156,18 @@ namespace SoulsLikeIsh.Character.Enemy
         }
 
         private void HandleDeath() => StateMachine.ChangeState(DeadState);
+
+        public void AlertToChase(Transform playerTransform)
+        {
+            if (Health.IsDead) return;
+            if (player == null) player = playerTransform;
+            StateMachine.ChangeState(ChaseState);
+        }
+
+        public void LeashBack()
+        {
+            if (Health.IsDead) return;
+            StateMachine.ChangeState(ReturnState);
+        }
     }
 }
