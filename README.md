@@ -60,6 +60,7 @@ Namespace root: `SoulsLikeIsh`.
 4. **Hitbox/Hurtbox + Parry Window** — ✅ frame-window-based hit detection (`Hitbox`/`Hurtbox`/`AttackData`), binary parry window with punishable whiff recovery
 5. **Hit Feedback** — ✅ masked-layer upper-body flinch (`HitReact`) on normal hits, full-body `Stagger` state reserved for parry-punish CC
 6. **Data-Driven Attacks** — ✅ `AttackData` ScriptableObjects for move timing/damage/stamina cost, no code changes needed to add new attacks
+7. **Locomotion Blending** — ✅ 2D Freeform Cartesian blend tree (`MoveX`/`MoveY`) on `PlayerAnimator`; local-space velocity drives directional strafe clips, collapses to forward-only blending automatically when not locked on (no separate strafe mode/bool needed)
 
 ## Build Order (completed so far)
 
@@ -71,14 +72,14 @@ Namespace root: `SoulsLikeIsh`.
 6. ✅ Attack combo chaining (`AttackData.NextCombo`, combo window buffering) + centralized input buffer (Attack/Dodge/Parry)
 7. ✅ A lightweight soft target lock (stap to target on attack + line of sight during swing, rotate only the character model not the camera)
 8. ✅ Hit reaction feedback — masked upper-body Animator layer (`HitReact`) driven from `PlayerController`/`EnemyController.TakeDamage`, separate from the full-body `Stagger` interrupt used for parry punishes
-9. ✅ Implemented Lock-On camera system and target detection and player-facing/strafe movement based on the lock on target. (strafe movement animation still pending)
+9. ✅ Implemented Lock-On camera system and target detection and player-facing/strafe movement based on the lock on target
+10. ✅ 2D directional strafe locomotion (`MoveX`/`MoveY` local-space blend tree, 8-directional clips) replacing the single forward-run animation during lock-on strafing
 
 ## Known Gaps / Candidates for Next Steps
 
 - Guard-break isn't handled when stamina can't cover a blocked hit (currently just blocks anyway — see `TODO` in `PlayerController.TakeDamage`)
 - Enemy death has no loot/despawn/respawn hookup yet
 - No posture/stagger meter — parry and stagger are binary/instant rather than accumulating
-- Lock on camera system and player-facing/strafe movement is implemented but the animation still use the default forward run animation instead of multidirectional animation.
 - Combo chain is currently linear (3 hits, no branching); no directional/charged variants yet
 - Input buffering covers Attack/Dodge/Parry only — Jump/Interact/LockOn remain direct event-driven calls
 - Open-world streaming, inventory, save/load, and multiplayer world-visiting remain out of scope for the current vertical slice
