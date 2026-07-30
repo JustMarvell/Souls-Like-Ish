@@ -4596,6 +4596,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2183113860738757183, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: a8b9440cf0992a8dcb75f7952e1501f5, type: 2}
     - target: {fileID: 4811950640891036616, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
       propertyPath: m_Name
       value: CharacterTest_PICO

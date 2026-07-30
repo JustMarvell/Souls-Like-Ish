@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0e5ff932616824ea45bf9b2c5f84a6, type: 3}
+  m_Name: GreatSwordCombo 3
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Combat.AttackData
+  duration: 0.5
+  activeStart: 0.15
+  activeEnd: 0.3
+  damage: 10
+  staminaCost: 20
+  animationState: Attack 3
+  nextCombo: {fileID: 11400000, guid: 32c7879a2aff89028b89c38c8c42895d, type: 2}
+  comboWindowStart: 0.4
+  comboWindowEnd: 0.7

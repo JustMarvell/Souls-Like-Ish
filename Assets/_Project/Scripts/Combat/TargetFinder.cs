@@ -40,5 +40,26 @@ namespace SoulsLikeIsh.Combat
             }
             return targets;
         }
+
+        public static Transform FindNearestTarget(Vector3 origin, float radius, LayerMask mask)
+        {
+            var hits = Physics.OverlapSphere(origin, radius, mask);
+            Transform best = null;
+            float bestDist = float.MaxValue;
+
+            foreach (var hit in hits)
+            {
+                var target = hit.GetComponentInParent<ILockOnTarget>();
+                if (target == null || !target.IsTargetable) continue;
+
+                float dist = Vector3.Distance(origin, target.LockOnPoint.position);
+                if (dist < bestDist)
+                {
+                    bestDist = dist;
+                    best = target.LockOnPoint;
+                }
+            }
+            return best;
+        }
     }
 }

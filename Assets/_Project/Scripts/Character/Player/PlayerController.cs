@@ -69,6 +69,9 @@ namespace SoulsLikeIsh.Character.Player
         public Transform FindAttackTarget() =>
             Combat.TargetFinder.FindBestTarget(transform.position, transform.forward, targetSearchRadius, targetSearchAngle, targetableLayers);
 
+        public Transform FindBlockStrafeTarget() =>
+            IsLockedOn ? LockOnTarget : Combat.TargetFinder.FindNearestTarget(transform.position, targetSearchRadius, targetableLayers);
+
         private static readonly int MoveXHash = Animator.StringToHash("MoveX");
         private static readonly int MoveYHash = Animator.StringToHash("MoveY");
         private static readonly int AttackHash = Animator.StringToHash("Attack");
