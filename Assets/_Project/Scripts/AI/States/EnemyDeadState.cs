@@ -15,6 +15,8 @@ namespace SoulsLikeIsh.AI
             _enemy.Agent.enabled = false;
             _enemy.WeaponHitbox.DisableHitbox();
             _enemy.PlayDeathAnimation();
+            _enemy.Collider.enabled = false;
+            _enemy.DestroyEnemy(5f);
             // TODO: disable hurtbox/colliders, drop loot, despawn/respawn once those systems exist.
         }
 

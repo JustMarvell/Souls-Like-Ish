@@ -38,6 +38,7 @@ namespace SoulsLikeIsh.Character.Enemy
         public Vector3 SpawnPoint { get; private set; }
         public EncounterArea Encounter { get; set; }
         public PoiseComponent Poise { get; private set; }
+        public Collider Collider { get; private set; }
 
         public float DetectionRange => detectionRange;
         public float AttackRange => attackRange;
@@ -68,6 +69,7 @@ namespace SoulsLikeIsh.Character.Enemy
             Stamina = GetComponent<StaminaComponent>();
             Health = GetComponent<HealthComponent>();
             Poise = GetComponent<PoiseComponent>();
+            Collider = GetComponent<Collider>();
             StateMachine = new StateMachine();
 
             IdleState = new EnemyIdleState(this);
@@ -188,6 +190,11 @@ namespace SoulsLikeIsh.Character.Enemy
         {
             if (Health.IsDead) return;
             StateMachine.ChangeState(ReturnState);
+        }
+
+        public void DestroyEnemy(float delay)
+        {
+            Destroy(gameObject, delay);
         }
     }
 }
