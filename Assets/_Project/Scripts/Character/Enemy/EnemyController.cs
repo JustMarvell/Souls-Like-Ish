@@ -23,6 +23,7 @@ namespace SoulsLikeIsh.Character.Enemy
         [SerializeField] private float attackRange = 2f;
         [SerializeField] private float staminaCostPerAttack = 20f;
         [SerializeField] private float staggerDuration = 0.6f;
+        [SerializeField] private float bigStaggerDuration = 1.4f;
         [SerializeField] private LayerMask visionBlockingLayers;
 
         public Transform Player => player;
@@ -42,6 +43,7 @@ namespace SoulsLikeIsh.Character.Enemy
         public float AttackRange => attackRange;
         public float StaminaCostPerAttack => staminaCostPerAttack;
         public float StaggerDuration => staggerDuration;
+        public float BigStaggerDuration => bigStaggerDuration;
 
         public EnemyIdleState IdleState { get; private set; }
         public EnemyChaseState ChaseState { get; private set; }
@@ -58,6 +60,7 @@ namespace SoulsLikeIsh.Character.Enemy
         private static readonly int StaggerHash = Animator.StringToHash("Stagger");
         private static readonly int DeathHash = Animator.StringToHash("Death");
         private static readonly int HitReactHash = Animator.StringToHash("HitReact");
+        private static readonly int StaggerBigHash = Animator.StringToHash("StaggerBig");
 
         private void Awake()
         {
@@ -125,7 +128,11 @@ namespace SoulsLikeIsh.Character.Enemy
         }
 
         public void PlayAttackAnimation() { if (animator != null) animator.SetTrigger(AttackHash); }
-        public void PlayStaggerAnimation() { if (animator != null) animator.SetTrigger(StaggerHash); }
+        public void PlayStaggerAnimation(StaggerType type)
+        {
+            if (animator == null) return;
+            animator.SetTrigger(type == StaggerType.Big ? StaggerBigHash : StaggerHash);
+        }
 
         public void PlayHitReaction()
         {
@@ -150,9 +157,14 @@ namespace SoulsLikeIsh.Character.Enemy
             if (Health.IsDead) return;
 
             if (Poise != null && StateMachine.CurrentState != StaggerState && Poise.ApplyStagger(damageInfo.StaggerPower))
+            {
+                StaggerState.SetType(damageInfo.StaggerType);
                 StateMachine.ChangeState(StaggerState);
+            }
             else if (StateMachine.CurrentState != StaggerState)
+            {
                 PlayHitReaction();
+            }
         }
 
         public void ApplyStagger()

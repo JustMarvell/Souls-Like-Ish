@@ -17,7 +17,10 @@ MonoBehaviour:
   activeEnd: 1
   damage: 10
   staminaCost: 0
+  staggerPower: 100
+  staggerType: 1
   animationState: Attack 5
   nextCombo: {fileID: 11400000, guid: f86a2865c47210f33a9656e3c6db0685, type: 2}
   comboWindowStart: 0.1
   comboWindowEnd: 1.1
+  canWarp: 1

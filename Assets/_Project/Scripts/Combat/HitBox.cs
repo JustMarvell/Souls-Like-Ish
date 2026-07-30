@@ -12,6 +12,7 @@ namespace SoulsLikeIsh.Combat
         private readonly HashSet<IDamageable> _hitTargets = new();
         private int _damage;
         private int _staggerPower;
+        private StaggerType _staggerType;
 
         public GameObject Owner => owner;
 
@@ -38,10 +39,11 @@ namespace SoulsLikeIsh.Combat
             }
         }
 
-        public void SetAttack(int damage, int staggerPower)
+        public void SetAttack(int damage, int staggerPower, StaggerType staggerType)
         {
             _damage = damage;
             _staggerPower = staggerPower;
+            _staggerType = staggerType;
         }
 
         public void EnableHitbox()
@@ -61,7 +63,7 @@ namespace SoulsLikeIsh.Combat
             if (hurtbox != null && hurtbox.OwnerRoot == owner) return;
 
             _hitTargets.Add(damageable);
-            damageable.TakeDamage(new DamageInfo(_damage, _staggerPower, owner));
+            damageable.TakeDamage(new DamageInfo(_damage, _staggerPower, _staggerType, owner));
         }
     }
 }
