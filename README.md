@@ -20,6 +20,8 @@ Vertical slice in progress. Character, Combat, and a basic Enemy are implemented
 
 Fast, punishing, parry-centric combat with weight:
 - **Attack** — data-driven via `AttackData` ScriptableObjects (damage, stamina cost, active-frame window); chains into a 3-hit combo via `NextCombo` references, with a buffered-input combo window per hit
+- **Target Acquisition & Traversal** — Freeflow Combat–inspired: attacking auto-acquires the nearest enemy in a forward cone (`TargetFinder.FindBestLockOnTarget`) and Lerp-traverses into range (`PlayerAttackState`, decoupled from animation root motion), stopping at `AttackStopDistance` so swings land from a proper distance instead of inside the target
+- **Target Cycling** — Cycle Target (Tab) mid-combo redirects the current/next swing to a different nearby enemy (angle-sorted via `TargetFinder.FindNextLockOnTarget`); also switches the active Lock-On target if locked on
 - **Dodge** — timed i-frame-style evasion (stamina-gated, root-motion driven)
 - **Parry** — tight binary timing window (no posture meter yet); a successful parry negates the hit, staggers the attacker (via `IStaggerable`), and opens a short counter window. A whiffed parry has a punishable recovery.
 - **Defend/Block** — held guard; fully negates damage but drains stamina per hit taken
@@ -64,6 +66,7 @@ Namespace root: `SoulsLikeIsh`.
 6. **Data-Driven Attacks** — ✅ `AttackData` ScriptableObjects for move timing/damage/stamina cost, no code changes needed to add new attacks
 7. **Locomotion Blending** — ✅ 2D Freeform Cartesian blend tree (`MoveX`/`MoveY`) on `PlayerAnimator`; local-space velocity drives directional strafe clips, collapses to forward-only blending automatically when not locked on (no separate strafe mode/bool needed)
 8. **Encounter/POI System** — ✅ `EncounterArea` groups guardian enemies + an `EncounterChest` behind a shared trigger zone: one enemy spotting the player pack-alerts the whole group into `ChaseState`; leaving the zone sends all living enemies into a new `EnemyReturnState` (nav back to spawn, full heal, back to `IdleState`); chest unlocks once every guardian is dead and is claimed via the existing `Interact` action
+9. **Target Acquisition & Traversal** — ✅ Freeflow Combat–inspired retarget: `PlayerAttackState` acquires an `ILockOnTarget` on attack and moves the player toward it via a decoupled Lerp (no longer root-motion-warp-based), clamped to `AttackStopDistance`; `CycleTarget` input lets the player redirect mid-combo, syncing with `LockOnController` when locked on
 
 ## Build Order (completed so far)
 
@@ -78,6 +81,7 @@ Namespace root: `SoulsLikeIsh`.
 9. ✅ Implemented Lock-On camera system and target detection and player-facing/strafe movement based on the lock on target
 10. ✅ 2D directional strafe locomotion (`MoveX`/`MoveY` local-space blend tree, 8-directional clips) replacing the single forward-run animation during lock-on strafing
 11. ✅ POI/Encounter system — `EncounterArea` (group alert + leash-back + chest unlock), `EncounterChest` (interact-to-claim), `EnemyReturnState` (leash navigation + full heal reset)
+12. ✅ Freeflow Combat–inspired attack targeting — replaced the root-motion warp-clamp with decoupled Lerp traversal in `PlayerAttackState`, auto-target acquisition via `TargetFinder.FindBestLockOnTarget`, and mid-combo target cycling (`CycleTarget` input + `TargetFinder.FindNextLockOnTarget`) that also redirects an active Lock-On
 
 ## Known Gaps / Candidates for Next Steps
 
@@ -89,3 +93,4 @@ Namespace root: `SoulsLikeIsh`.
 - Open-world streaming, inventory, save/load, and multiplayer world-visiting remain out of scope for the current vertical slice
 - Chest claim has no loot/inventory hookup yet (`EncounterChest.TryClaim` is a stub — see `TODO`)
 - Encounter groups are hand-wired via a serialized enemy list; no runtime spawner/pooling for POIs yet
+- Target cycling is bound to keyboard Tab only — no gamepad binding yet
