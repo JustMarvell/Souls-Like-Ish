@@ -36,6 +36,7 @@ namespace SoulsLikeIsh.Character.Enemy
         public StateMachine StateMachine { get; private set; }
         public Vector3 SpawnPoint { get; private set; }
         public EncounterArea Encounter { get; set; }
+        public PoiseComponent Poise { get; private set; }
 
         public float DetectionRange => detectionRange;
         public float AttackRange => attackRange;
@@ -63,6 +64,7 @@ namespace SoulsLikeIsh.Character.Enemy
             Agent = GetComponent<NavMeshAgent>();
             Stamina = GetComponent<StaminaComponent>();
             Health = GetComponent<HealthComponent>();
+            Poise = GetComponent<PoiseComponent>();
             StateMachine = new StateMachine();
 
             IdleState = new EnemyIdleState(this);
@@ -145,7 +147,11 @@ namespace SoulsLikeIsh.Character.Enemy
         public void TakeDamage(DamageInfo damageInfo)
         {
             Health.TakeDamage(damageInfo.Amount);
-            if (!Health.IsDead && StateMachine.CurrentState != StaggerState)
+            if (Health.IsDead) return;
+
+            if (Poise != null && StateMachine.CurrentState != StaggerState && Poise.ApplyStagger(damageInfo.StaggerPower))
+                StateMachine.ChangeState(StaggerState);
+            else if (StateMachine.CurrentState != StaggerState)
                 PlayHitReaction();
         }
 

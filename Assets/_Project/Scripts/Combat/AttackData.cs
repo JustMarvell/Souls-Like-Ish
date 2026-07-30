@@ -10,12 +10,14 @@ namespace SoulsLikeIsh.Combat
         [SerializeField] private float activeEnd = 0.3f;
         [SerializeField] private int damage = 10;
         [SerializeField] private float staminaCost = 20f;
+        [SerializeField] private int staggerPower = 20;
 
         public float Duration => duration;
         public float ActiveStart => activeStart;
         public float ActiveEnd => activeEnd;
         public int Damage => damage;
         public float StaminaCost => staminaCost;
+        public int StaggerPower => staggerPower;
 
         [SerializeField] private string animationState = "Attack";
         [SerializeField] private AttackData nextCombo;

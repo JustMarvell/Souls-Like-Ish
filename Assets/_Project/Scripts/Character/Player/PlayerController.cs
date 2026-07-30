@@ -28,6 +28,7 @@ namespace SoulsLikeIsh.Character.Player
         [SerializeField] private float parryRecoveryDuration = 0.3f;
         [SerializeField] private float counterWindowDuration = 1.5f;
         [SerializeField] private float hitReactDuration = 0.4f;
+        [SerializeField] private float staggerDuration = 1f;
         [SerializeField] private LayerMask targetableLayers;
         [SerializeField] private float targetSearchRadius = 6f;
         [SerializeField] private float targetSearchAngle = 70f;
@@ -58,6 +59,7 @@ namespace SoulsLikeIsh.Character.Player
         public StateMachine StateMachine { get; private set; }
         public DefenseMode CurrentDefenseMode { get; set; }
         public InputBuffer Buffer { get; } = new InputBuffer();
+        public PoiseComponent Poise { get; private set; }
         public bool CounterWindowOpen { get; private set; }
 
         public float MoveSpeed => moveSpeed;
@@ -70,6 +72,7 @@ namespace SoulsLikeIsh.Character.Player
         public float AttackTraversalSpeed => attackTraversalSpeed;
         public float AttackStopDistance => attackStopDistance;
         public float TargetSearchRadius => targetSearchRadius;
+        public float StaggerDuration => staggerDuration;
         public LayerMask TargetableLayers => targetableLayers;
 
         public Combat.ILockOnTarget FindAttackTarget() =>
@@ -92,6 +95,7 @@ namespace SoulsLikeIsh.Character.Player
         private static readonly int BlockHitHash = Animator.StringToHash("BlockHit");
         private static readonly int IsBlockingHash = Animator.StringToHash("IsBlocking");
         private static readonly int HitReactHash = Animator.StringToHash("HitReact");
+        private static readonly int StaggerHash = Animator.StringToHash("Stagger");
 
         public Vector3 MoveVelocity { get; set; }
         public bool RootMotionEnabled { get; set; }
@@ -102,6 +106,7 @@ namespace SoulsLikeIsh.Character.Player
         public PlayerDodgeState DodgeState { get; private set; }
         public PlayerBlockState BlockState { get; private set; }
         public PlayerParryState ParryState { get; private set; }
+        public PlayerStaggerState StaggerState { get; private set; }
 
         private float _verticalVelocity;
         private float _counterWindowTimer;
@@ -113,6 +118,7 @@ namespace SoulsLikeIsh.Character.Player
             CharacterController = GetComponent<CharacterController>();
             Stamina = GetComponent<StaminaComponent>();
             Health = GetComponent<HealthComponent>();
+            Poise = GetComponent<PoiseComponent>();
             StateMachine = new StateMachine();
 
             IdleState = new PlayerIdleState(this);
@@ -121,6 +127,7 @@ namespace SoulsLikeIsh.Character.Player
             DodgeState = new PlayerDodgeState(this);
             BlockState = new PlayerBlockState(this);
             ParryState = new PlayerParryState(this);
+            StaggerState = new PlayerStaggerState(this);
 
             _hitReactLayer = animator != null ? animator.GetLayerIndex("HitReact") : -1;
         }
@@ -283,6 +290,11 @@ namespace SoulsLikeIsh.Character.Player
             _hitReactTimer = hitReactDuration;
         }
 
+        public void PlayStaggerAnimation()
+        {
+            if (animator != null) animator.SetTrigger(StaggerHash);
+        }
+
         private void TickHitReact()
         {
             if (_hitReactTimer <= 0f) return;
@@ -324,7 +336,11 @@ namespace SoulsLikeIsh.Character.Player
 
                 default:
                     Health.TakeDamage(damageInfo.Amount);
-                    PlayHitReaction();
+                    if (Health.IsDead) break;
+                    if (Poise != null && Poise.ApplyStagger(damageInfo.StaggerPower))
+                        StateMachine.ChangeState(StaggerState);
+                    else
+                        PlayHitReaction();
                     break;
             }
         }

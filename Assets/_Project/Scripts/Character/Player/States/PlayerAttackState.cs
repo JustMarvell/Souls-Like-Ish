@@ -43,7 +43,7 @@ namespace SoulsLikeIsh.Character.Player
 
             _player.MoveVelocity = Vector3.zero;
             _player.RootMotionEnabled = !_traversing;
-            _player.WeaponHitbox.SetDamage(_player.ActiveAttack.Damage);
+            _player.WeaponHitbox.SetAttack(_player.ActiveAttack.Damage, _player.ActiveAttack.StaggerPower);
         }
 
         public void Tick()
