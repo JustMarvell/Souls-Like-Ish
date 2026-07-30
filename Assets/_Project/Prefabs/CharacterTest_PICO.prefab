@@ -4734,6 +4734,7 @@ GameObject:
   - component: {fileID: 5792622669506853511}
   - component: {fileID: 6757676381580636719}
   - component: {fileID: 5457232370888044703}
+  - component: {fileID: 7786996568072850522}
   m_Layer: 3
   m_Name: CharacterTest_PICO
   m_TagString: Player
@@ -4847,12 +4848,16 @@ MonoBehaviour:
   parryRecoveryDuration: 0.8
   counterWindowDuration: 1.5
   hitReactDuration: 0.4
+  staggerDuration: 1
+  bigStaggerDuration: 1.4
   targetableLayers:
     serializedVersion: 2
     m_Bits: 64
   targetSearchRadius: 6
   targetSearchAngle: 210
   attackRotationSpeed: 960
+  attackTraversalSpeed: 8
+  attackStopDistance: 1.2
   attackBufferWindow: 0.3
   dodgeBufferWindow: 0.2
   parryBufferWindow: 0.2
@@ -4886,6 +4891,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Combat.Hurtbox
   ownerRoot: {fileID: 0}
+--- !u!114 &7786996568072850522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4811950640891036616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42bf13eb91145a19090c190bf4aa049e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Character.Shared.PoiseComponent
+  maxPoise: 40
+  regenRate: 30
+  regenDelay: 2
 --- !u!1 &4830215423093285221
 GameObject:
   m_ObjectHideFlags: 0
