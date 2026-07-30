@@ -233,10 +233,18 @@ namespace SoulsLikeIsh.Character.Player
             float remaining = Mathf.Max(toTarget.magnitude - attackWarpStopDistance, 0f);
             if (remaining <= 0f) return delta;
 
-            float forwardMag = transform.InverseTransformVector(delta).z;
-            if (forwardMag <= 0f) return delta;
+            Vector3 localDelta = transform.InverseTransformVector(delta);
+            float horizontalMag = new Vector2(localDelta.x, localDelta.z).magnitude;
+            if (horizontalMag <= 0f) return delta;
 
-            Vector3 warped = toTarget.normalized * Mathf.Min(forwardMag, remaining);
+            Vector3 dir = toTarget.normalized;
+            float moveMag = Mathf.Min(horizontalMag, remaining);
+
+            if (Physics.SphereCast(transform.position + Vector3.up * 0.1f, CharacterController.radius,
+                    dir, out var hit, moveMag, targetableLayers))
+                moveMag = Mathf.Max(hit.distance - attackWarpStopDistance * 0.5f, 0f);
+
+            Vector3 warped = dir * moveMag;
             warped.y = delta.y;
             return warped;
         }

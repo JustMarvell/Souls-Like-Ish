@@ -21,6 +21,8 @@ namespace SoulsLikeIsh.Combat
         [SerializeField] private AttackData nextCombo;
         [SerializeField] private float comboWindowStart = 0.4f;
         [SerializeField] private float comboWindowEnd = 0.7f;
+        [SerializeField] private bool canWarp = true;
+        public bool CanWarp => canWarp;
 
         public string AnimationState => animationState;
         public AttackData NextCombo => nextCombo;

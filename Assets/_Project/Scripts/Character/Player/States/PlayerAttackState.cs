@@ -23,7 +23,7 @@ namespace SoulsLikeIsh.Character.Player
             _bufferedAttack = false;
             _target = _player.FindAttackTarget();
 
-            _player.AttackWarpTarget = _target;
+            _player.AttackWarpTarget = _player.ActiveAttack.CanWarp ? _target : null;
 
             if (_target != null)
             {

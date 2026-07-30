@@ -6159,7 +6159,7 @@ PrefabInstance:
       objectReference: {fileID: 1278256444}
     - target: {fileID: 5792622669506853511, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
       propertyPath: attackWarpStopDistance
-      value: 1.5
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 6924203896028620447, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
       propertyPath: m_LocalPosition.x
