@@ -537,6 +537,7 @@ MonoBehaviour:
   parryRecoveryDuration: 0.3
   counterWindowDuration: 1.5
   hitReactDuration: 0.4
+  staggerDuration: 1
   targetableLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -4732,6 +4733,7 @@ GameObject:
   - component: {fileID: 5324505941385386920}
   - component: {fileID: 5324505941385386919}
   - component: {fileID: 5324505941385386918}
+  - component: {fileID: 5324505941385386924}
   m_Layer: 6
   m_Name: SKM_Skeleton_Necromancer
   m_TagString: Untagged
@@ -4999,6 +5001,21 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &5324505941385386924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4805236752024060191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42bf13eb91145a19090c190bf4aa049e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Character.Shared.PoiseComponent
+  maxPoise: 40
+  regenRate: 30
+  regenDelay: 2
 --- !u!4 &5325089584948341445
 Transform:
   m_ObjectHideFlags: 0
@@ -6205,8 +6222,31 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4811950640891036616, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8524374839536172459}
   m_SourcePrefab: {fileID: 100100000, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
+--- !u!1 &8524374839536172458 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4811950640891036616, guid: 8f613be824b16f0caaa29644ddaa2848, type: 3}
+  m_PrefabInstance: {fileID: 8524374839536172457}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8524374839536172459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8524374839536172458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42bf13eb91145a19090c190bf4aa049e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Character.Shared.PoiseComponent
+  maxPoise: 40
+  regenRate: 30
+  regenDelay: 2
 --- !u!1 &8569488119810170037
 GameObject:
   m_ObjectHideFlags: 0
