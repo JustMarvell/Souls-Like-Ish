@@ -32,6 +32,7 @@ namespace SoulsLikeIsh.Character.Player
         [SerializeField] private float targetSearchRadius = 6f;
         [SerializeField] private float targetSearchAngle = 70f;
         [SerializeField] private float attackRotationSpeed = 960f;
+        [SerializeField] private float attackWarpStopDistance = 1.2f;
         [SerializeField] private float attackBufferWindow = 0.3f;
         [SerializeField] private float dodgeBufferWindow = 0.2f;
         [SerializeField] private float parryBufferWindow = 0.2f;
@@ -50,6 +51,7 @@ namespace SoulsLikeIsh.Character.Player
         public Animator Animator => animator;
         public Hitbox WeaponHitbox => weaponHitbox;
         public AttackData ActiveAttack { get; set; }
+        public Transform AttackWarpTarget { get; set; }
         public StaminaComponent Stamina { get; private set; }
         public HealthComponent Health { get; private set; }
         public CharacterController CharacterController { get; private set; }
@@ -218,8 +220,25 @@ namespace SoulsLikeIsh.Character.Player
         private void OnAnimatorMove()
         {
             if (!RootMotionEnabled || animator == null) return;
-            CharacterController.Move(animator.deltaPosition);
+            CharacterController.Move(WarpAttackDelta(animator.deltaPosition));
             transform.rotation *= animator.deltaRotation;
+        }
+
+        private Vector3 WarpAttackDelta(Vector3 delta)
+        {
+            if (AttackWarpTarget == null) return delta;
+
+            Vector3 toTarget = AttackWarpTarget.position - transform.position;
+            toTarget.y = 0f;
+            float remaining = Mathf.Max(toTarget.magnitude - attackWarpStopDistance, 0f);
+            if (remaining <= 0f) return delta;
+
+            float forwardMag = transform.InverseTransformVector(delta).z;
+            if (forwardMag <= 0f) return delta;
+
+            Vector3 warped = toTarget.normalized * Mathf.Min(forwardMag, remaining);
+            warped.y = delta.y;
+            return warped;
         }
 
         private void ApplyGravity()

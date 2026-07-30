@@ -23,6 +23,8 @@ namespace SoulsLikeIsh.Character.Player
             _bufferedAttack = false;
             _target = _player.FindAttackTarget();
 
+            _player.AttackWarpTarget = _target;
+
             if (_target != null)
             {
                 Vector3 dir = _target.position - _player.transform.position;
@@ -92,6 +94,7 @@ namespace SoulsLikeIsh.Character.Player
         {
             _player.RootMotionEnabled = false;
             if (!_hitboxClosed) _player.WeaponHitbox.DisableHitbox();
+            _player.AttackWarpTarget = null;
         }
     }
 }
