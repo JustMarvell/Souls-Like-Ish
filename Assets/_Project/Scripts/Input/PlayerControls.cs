@@ -227,7 +227,7 @@ namespace SoulsLikeIsh.Input
                 {
                     ""name"": ""2D Vector"",
                     ""id"": ""3c442072-e834-4049-8e7e-6269edbeac1f"",
-                    ""path"": ""2DVector"",
+                    ""path"": ""2DVector(mode=1)"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

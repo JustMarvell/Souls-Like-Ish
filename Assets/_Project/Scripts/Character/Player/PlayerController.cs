@@ -69,7 +69,8 @@ namespace SoulsLikeIsh.Character.Player
         public Transform FindAttackTarget() =>
             Combat.TargetFinder.FindBestTarget(transform.position, transform.forward, targetSearchRadius, targetSearchAngle, targetableLayers);
 
-        private static readonly int SpeedHash = Animator.StringToHash("Speed");
+        private static readonly int MoveXHash = Animator.StringToHash("MoveX");
+        private static readonly int MoveYHash = Animator.StringToHash("MoveY");
         private static readonly int AttackHash = Animator.StringToHash("Attack");
         private static readonly int DodgeHash = Animator.StringToHash("Dodge");
         private static readonly int CounterHash = Animator.StringToHash("Counter");
@@ -142,7 +143,11 @@ namespace SoulsLikeIsh.Character.Player
             CharacterController.Move((MoveVelocity + Vector3.up * _verticalVelocity) * Time.deltaTime);
 
             if (animator != null)
-                animator.SetFloat(SpeedHash, MoveVelocity.magnitude);
+            {
+                Vector3 localMove = transform.InverseTransformDirection(MoveVelocity) / moveSpeed;
+                animator.SetFloat(MoveXHash, localMove.x);
+                animator.SetFloat(MoveYHash, localMove.z);
+            }
 
             TickCounterWindow();
             TickHitReact();
