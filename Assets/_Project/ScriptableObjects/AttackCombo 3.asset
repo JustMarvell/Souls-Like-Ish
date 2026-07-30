@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0e5ff932616824ea45bf9b2c5f84a6, type: 3}
+  m_Name: AttackCombo 3
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Combat.AttackData
+  duration: 1.083
+  activeStart: 0.15
+  activeEnd: 1
+  damage: 10
+  staminaCost: 0
+  animationState: Attack 2
+  nextCombo: {fileID: 11400000, guid: 84585ccfd14032e66923a82182339412, type: 2}
+  comboWindowStart: 0.1
+  comboWindowEnd: 1

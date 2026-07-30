@@ -4769,7 +4769,7 @@ Animator:
   m_GameObject: {fileID: 4811950640891036616}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 10038fdbf93c4dd43af9ce774d03a956, type: 3}
-  m_Controller: {fileID: 9100000, guid: 0077a5e30d9d9bc4c89f68628789ffc4, type: 2}
+  m_Controller: {fileID: 9100000, guid: a2e2688889d4da3cba76fb4788f1aef7, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -4835,9 +4835,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLikeIsh.Character.Player.PlayerController
   inputReader: {fileID: 11400000, guid: 638d8f326db7f781ab7a650e7f273f12, type: 2}
   cameraTransform: {fileID: 0}
+  lockOnController: {fileID: 0}
   animator: {fileID: 2183113860738757183}
   weaponHitbox: {fileID: 6965291381897590020}
-  defaultAttack: {fileID: 11400000, guid: 028bdd3855a3dfd16b023b2aa028115a, type: 2}
+  defaultAttack: {fileID: 11400000, guid: 4f497e8134dcced9a883df18cec01257, type: 2}
   counterAttack: {fileID: 11400000, guid: f001d951350399c5abaa6f3d8f27cdc3, type: 2}
   dodgeStaminaCost: 20
   dodgeDuration: 1
@@ -4845,6 +4846,7 @@ MonoBehaviour:
   parryWindowDuration: 0.8
   parryRecoveryDuration: 0.8
   counterWindowDuration: 1.5
+  hitReactDuration: 0.4
   targetableLayers:
     serializedVersion: 2
     m_Bits: 64
