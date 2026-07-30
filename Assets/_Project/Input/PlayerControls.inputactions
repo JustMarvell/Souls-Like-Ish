@@ -122,6 +122,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "CycleTarget",
+                    "type": "Button",
+                    "id": "dba298cb-b211-4537-819f-7449c8f86588",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -441,6 +450,17 @@
                     "processors": "Scale(factor=100)",
                     "groups": "",
                     "action": "LookY",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e686c945-7758-47ec-8084-f2d6f0294544",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CycleTarget",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

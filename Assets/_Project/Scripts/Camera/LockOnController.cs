@@ -74,6 +74,12 @@ namespace SoulsLikeIsh.CameraSystem
             return best;
         }
 
+        public void SwitchTarget(ILockOnTarget target)
+        {
+            if (target == null || target == CurrentTarget) return;
+            SetTarget(target);
+        }
+
         private void SetTarget(ILockOnTarget target)
         {
             CurrentTarget = target;

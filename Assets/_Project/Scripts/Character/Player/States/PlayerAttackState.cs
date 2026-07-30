@@ -1,5 +1,6 @@
 using UnityEngine;
 using SoulsLikeIsh.Core;
+using SoulsLikeIsh.Combat;
 using SoulsLikeIsh.Input;
 
 namespace SoulsLikeIsh.Character.Player
@@ -7,47 +8,48 @@ namespace SoulsLikeIsh.Character.Player
     public class PlayerAttackState : IState
     {
         private readonly PlayerController _player;
-        private Transform _target;
+        private ILockOnTarget _target;
         private float _timer;
         private bool _hitboxOpened;
         private bool _hitboxClosed;
         private bool _bufferedAttack;
+        private bool _traversing;
 
         public PlayerAttackState(PlayerController player) => _player = player;
 
         public void Enter()
         {
+            _target = _player.ActiveAttack.CanWarp ? _player.FindAttackTarget() : null;
+            BeginSwing();
+        }
+
+        public void CycleTarget()
+        {
+            var next = TargetFinder.FindNextLockOnTarget(_player.transform.position, _target, _player.TargetSearchRadius, _player.TargetableLayers);
+            if (next == null) return;
+            _target = next;
+            if (_player.IsLockedOn) _player.SwitchLockOnTarget(next);
+        }
+
+        private void BeginSwing()
+        {
             _timer = 0f;
             _hitboxOpened = false;
             _hitboxClosed = false;
             _bufferedAttack = false;
-            _target = _player.FindAttackTarget();
+            _traversing = _target != null;
 
-            _player.AttackWarpTarget = _player.ActiveAttack.CanWarp ? _target : null;
+            if (_target != null) FaceTarget(instant: true);
 
-            if (_target != null)
-            {
-                Vector3 dir = _target.position - _player.transform.position;
-                dir.y = 0f;
-                if (dir.sqrMagnitude > 0.001f)
-                    _player.transform.rotation = Quaternion.LookRotation(dir);
-            }
-            
             _player.MoveVelocity = Vector3.zero;
-            _player.RootMotionEnabled = true;
+            _player.RootMotionEnabled = !_traversing;
             _player.WeaponHitbox.SetDamage(_player.ActiveAttack.Damage);
         }
 
         public void Tick()
         {
-            if (_target != null && _timer <= _player.ActiveAttack.ActiveStart)
-            {
-                Vector3 dir = _target.position - _player.transform.position;
-                dir.y = 0f;
-                if (dir.sqrMagnitude > 0.001f)
-                    _player.transform.rotation = Quaternion.RotateTowards(
-                        _player.transform.rotation, Quaternion.LookRotation(dir), _player.AttackRotationSpeed * Time.deltaTime);
-            }
+            if (_traversing) TickTraversal();
+            else if (_target != null && _timer <= _player.ActiveAttack.ActiveStart) FaceTarget(instant: false);
 
             _timer += Time.deltaTime;
             var attack = _player.ActiveAttack;
@@ -74,13 +76,42 @@ namespace SoulsLikeIsh.Character.Player
                 TryAdvance(attack);
         }
 
-        private void TryAdvance(SoulsLikeIsh.Combat.AttackData attack)
+        private void TickTraversal()
+        {
+            Vector3 toTarget = _target.LockOnPoint.position - _player.transform.position;
+            toTarget.y = 0f;
+            float dist = toTarget.magnitude;
+
+            FaceTarget(instant: false);
+
+            if (dist <= _player.AttackStopDistance)
+            {
+                _traversing = false;
+                return;
+            }
+
+            float moveDist = Mathf.Min(_player.AttackTraversalSpeed * Time.deltaTime, dist - _player.AttackStopDistance);
+            _player.CharacterController.Move(toTarget.normalized * moveDist);
+        }
+
+        private void FaceTarget(bool instant)
+        {
+            Vector3 dir = _target.LockOnPoint.position - _player.transform.position;
+            dir.y = 0f;
+            if (dir.sqrMagnitude < 0.0001f) return;
+
+            Quaternion rot = Quaternion.LookRotation(dir);
+            _player.transform.rotation = instant ? rot :
+                Quaternion.RotateTowards(_player.transform.rotation, rot, _player.AttackRotationSpeed * Time.deltaTime);
+        }
+
+        private void TryAdvance(AttackData attack)
         {
             if (_bufferedAttack && attack.NextCombo != null && _player.Stamina.TrySpend(attack.NextCombo.StaminaCost))
             {
                 _player.ActiveAttack = attack.NextCombo;
                 _player.PlayAttackAnimation(attack.NextCombo.AnimationState);
-                Enter();
+                BeginSwing();
             }
             else
             {
@@ -94,7 +125,6 @@ namespace SoulsLikeIsh.Character.Player
         {
             _player.RootMotionEnabled = false;
             if (!_hitboxClosed) _player.WeaponHitbox.DisableHitbox();
-            _player.AttackWarpTarget = null;
         }
     }
 }

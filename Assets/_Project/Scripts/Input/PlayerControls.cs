@@ -210,6 +210,15 @@ namespace SoulsLikeIsh.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""CycleTarget"",
+                    ""type"": ""Button"",
+                    ""id"": ""dba298cb-b211-4537-819f-7449c8f86588"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -531,6 +540,17 @@ namespace SoulsLikeIsh.Input
                     ""action"": ""LookY"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e686c945-7758-47ec-8084-f2d6f0294544"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CycleTarget"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -558,6 +578,7 @@ namespace SoulsLikeIsh.Input
             m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
             m_Player_LookX = m_Player.FindAction("LookX", throwIfNotFound: true);
             m_Player_LookY = m_Player.FindAction("LookY", throwIfNotFound: true);
+            m_Player_CycleTarget = m_Player.FindAction("CycleTarget", throwIfNotFound: true);
         }
 
         ~@PlayerControls()
@@ -651,6 +672,7 @@ namespace SoulsLikeIsh.Input
         private readonly InputAction m_Player_Zoom;
         private readonly InputAction m_Player_LookX;
         private readonly InputAction m_Player_LookY;
+        private readonly InputAction m_Player_CycleTarget;
         /// <summary>
         /// Provides access to input actions defined in input action map "Player".
         /// </summary>
@@ -714,6 +736,10 @@ namespace SoulsLikeIsh.Input
             /// Provides access to the underlying input action "Player/LookY".
             /// </summary>
             public InputAction @LookY => m_Wrapper.m_Player_LookY;
+            /// <summary>
+            /// Provides access to the underlying input action "Player/CycleTarget".
+            /// </summary>
+            public InputAction @CycleTarget => m_Wrapper.m_Player_CycleTarget;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -779,6 +805,9 @@ namespace SoulsLikeIsh.Input
                 @LookY.started += instance.OnLookY;
                 @LookY.performed += instance.OnLookY;
                 @LookY.canceled += instance.OnLookY;
+                @CycleTarget.started += instance.OnCycleTarget;
+                @CycleTarget.performed += instance.OnCycleTarget;
+                @CycleTarget.canceled += instance.OnCycleTarget;
             }
 
             /// <summary>
@@ -829,6 +858,9 @@ namespace SoulsLikeIsh.Input
                 @LookY.started -= instance.OnLookY;
                 @LookY.performed -= instance.OnLookY;
                 @LookY.canceled -= instance.OnLookY;
+                @CycleTarget.started -= instance.OnCycleTarget;
+                @CycleTarget.performed -= instance.OnCycleTarget;
+                @CycleTarget.canceled -= instance.OnCycleTarget;
             }
 
             /// <summary>
@@ -973,6 +1005,13 @@ namespace SoulsLikeIsh.Input
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnLookY(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "CycleTarget" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnCycleTarget(InputAction.CallbackContext context);
         }
     }
 }

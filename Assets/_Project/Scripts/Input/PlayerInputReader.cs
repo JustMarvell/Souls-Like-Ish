@@ -13,6 +13,7 @@ namespace SoulsLikeIsh.Input
         public event Action OnJump;
         public event Action OnInteract;
         public event Action OnLockOn;
+        public event Action OnCycleTarget;
 
         public Vector2 MoveInput { get; private set; }
         public Vector2 LookInput { get; private set; }
@@ -82,6 +83,11 @@ namespace SoulsLikeIsh.Input
         public void OnLookY(InputAction.CallbackContext context)
         {
             
+        }
+
+        void PlayerControls.IPlayerActions.OnCycleTarget(InputAction.CallbackContext ctx)
+        {
+            if (ctx.performed) OnCycleTarget?.Invoke();
         }
     }
 }

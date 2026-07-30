@@ -32,7 +32,8 @@ namespace SoulsLikeIsh.Character.Player
         [SerializeField] private float targetSearchRadius = 6f;
         [SerializeField] private float targetSearchAngle = 70f;
         [SerializeField] private float attackRotationSpeed = 960f;
-        [SerializeField] private float attackWarpStopDistance = 1.2f;
+        [SerializeField] private float attackTraversalSpeed = 8f;
+        [SerializeField] private float attackStopDistance = 1.2f;
         [SerializeField] private float attackBufferWindow = 0.3f;
         [SerializeField] private float dodgeBufferWindow = 0.2f;
         [SerializeField] private float parryBufferWindow = 0.2f;
@@ -51,7 +52,6 @@ namespace SoulsLikeIsh.Character.Player
         public Animator Animator => animator;
         public Hitbox WeaponHitbox => weaponHitbox;
         public AttackData ActiveAttack { get; set; }
-        public Transform AttackWarpTarget { get; set; }
         public StaminaComponent Stamina { get; private set; }
         public HealthComponent Health { get; private set; }
         public CharacterController CharacterController { get; private set; }
@@ -67,12 +67,21 @@ namespace SoulsLikeIsh.Character.Player
         public float ParryWindowDuration => parryWindowDuration;
         public float ParryRecoveryDuration => parryRecoveryDuration;
         public float AttackRotationSpeed => attackRotationSpeed;
+        public float AttackTraversalSpeed => attackTraversalSpeed;
+        public float AttackStopDistance => attackStopDistance;
+        public float TargetSearchRadius => targetSearchRadius;
+        public LayerMask TargetableLayers => targetableLayers;
 
-        public Transform FindAttackTarget() =>
-            Combat.TargetFinder.FindBestTarget(transform.position, transform.forward, targetSearchRadius, targetSearchAngle, targetableLayers);
+        public Combat.ILockOnTarget FindAttackTarget() =>
+            Combat.TargetFinder.FindBestLockOnTarget(transform.position, transform.forward, targetSearchRadius, targetSearchAngle, targetableLayers);
 
         public Transform FindBlockStrafeTarget() =>
             IsLockedOn ? LockOnTarget : Combat.TargetFinder.FindNearestTarget(transform.position, targetSearchRadius, targetableLayers);
+
+        public void SwitchLockOnTarget(Combat.ILockOnTarget target)
+        {
+            if (lockOnController != null) lockOnController.SwitchTarget(target);
+        }
 
         private static readonly int MoveXHash = Animator.StringToHash("MoveX");
         private static readonly int MoveYHash = Animator.StringToHash("MoveY");
@@ -128,6 +137,7 @@ namespace SoulsLikeIsh.Character.Player
             inputReader.OnAttack += BufferAttack;
             inputReader.OnDodge += BufferDodge;
             inputReader.OnParry += BufferParry;
+            inputReader.OnCycleTarget += HandleCycleTarget;
         }
 
         private void OnDisable()
@@ -135,11 +145,19 @@ namespace SoulsLikeIsh.Character.Player
             inputReader.OnAttack -= BufferAttack;
             inputReader.OnDodge -= BufferDodge;
             inputReader.OnParry -= BufferParry;
+            inputReader.OnCycleTarget -= HandleCycleTarget;
         }
 
         private void BufferAttack() => Buffer.Buffer(PlayerAction.Attack);
         private void BufferDodge() => Buffer.Buffer(PlayerAction.Dodge);
         private void BufferParry() => Buffer.Buffer(PlayerAction.Parry);
+
+        private void HandleCycleTarget()
+        {
+            if (StateMachine.CurrentState == AttackState) { AttackState.CycleTarget(); return; }
+            if (IsLockedOn)
+                SwitchLockOnTarget(Combat.TargetFinder.FindNextLockOnTarget(transform.position, lockOnController.CurrentTarget, targetSearchRadius, targetableLayers));
+        }
 
         private void Update()
         {
@@ -220,33 +238,8 @@ namespace SoulsLikeIsh.Character.Player
         private void OnAnimatorMove()
         {
             if (!RootMotionEnabled || animator == null) return;
-            CharacterController.Move(WarpAttackDelta(animator.deltaPosition));
+            CharacterController.Move(animator.deltaPosition);
             transform.rotation *= animator.deltaRotation;
-        }
-
-        private Vector3 WarpAttackDelta(Vector3 delta)
-        {
-            if (AttackWarpTarget == null) return delta;
-
-            Vector3 toTarget = AttackWarpTarget.position - transform.position;
-            toTarget.y = 0f;
-            float remaining = Mathf.Max(toTarget.magnitude - attackWarpStopDistance, 0f);
-            if (remaining <= 0f) return delta;
-
-            Vector3 localDelta = transform.InverseTransformVector(delta);
-            float horizontalMag = new Vector2(localDelta.x, localDelta.z).magnitude;
-            if (horizontalMag <= 0f) return delta;
-
-            Vector3 dir = toTarget.normalized;
-            float moveMag = Mathf.Min(horizontalMag, remaining);
-
-            if (Physics.SphereCast(transform.position + Vector3.up * 0.1f, CharacterController.radius,
-                    dir, out var hit, moveMag, targetableLayers))
-                moveMag = Mathf.Max(hit.distance - attackWarpStopDistance * 0.5f, 0f);
-
-            Vector3 warped = dir * moveMag;
-            warped.y = delta.y;
-            return warped;
         }
 
         private void ApplyGravity()
