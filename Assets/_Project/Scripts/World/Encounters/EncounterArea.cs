@@ -12,7 +12,7 @@ namespace SoulsLikeIsh.World.Encounters
 
         private int _aliveCount;
 
-        private void Awake()
+        private void Start()
         {
             _aliveCount = enemies.Count;
             foreach (var enemy in enemies)
